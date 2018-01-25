@@ -34,8 +34,8 @@ from example import models
 class ExampleFlow(flow.Flow):
     model = models.Example
     states = dict(models.Example.STATES)
-    field = 'state'							# default if not provided
-    lookup_field = 'pk'						# default if not provided
+    field = 'state'                         # default if not provided
+    lookup_field = 'pk'                     # default if not provided
 
     transitions = {
         # draft can remain in draft state or move to approved
@@ -44,19 +44,16 @@ class ExampleFlow(flow.Flow):
         model.APPROVED: [],
     }
 
-    @classmethod
-    def draft_to_approved(cls, request, response, obj):
+    def draft_to_approved(self, request, response, obj, via_admin):
         # {current_state}_to_{new_state} - allows for fine grain state changes
         pass
 
-    @classmethod
-    def on_draft(cls, request, response, obj):
+    def on_draft(self, request, response, obj, via_admin):
         # on_{new_state} - catches all changes to new state
-        response['on_draft'] = True
-        return response
+        if not via_admin:
+            return {'some': 'value'}
 
-    @classmethod
-    def on_all(cls, request, response, obj):
+    def on_all(self, request, response, obj, via_admin):
         # on_all - catch all state updates - always executed last
         response['on_all'] = True
         return response
