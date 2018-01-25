@@ -26,39 +26,28 @@ class Flow(object):
                 self.states[new_state],
             ))
 
-    @classmethod
-    def _state_to_state(cls, current_state, new_state):
-        return '{}_to_{}'.format(current_state, new_state)
+    def process_state_to_state(self, current_state, new_state, **kwargs):
+        state_to_state = '{}_to_{}'.format(current_state, new_state)
+        return getattr(self, state_to_state)(**kwargs) if hasattr(self, state_to_state) else kwargs['response']
 
-    @classmethod
-    def _on_state(cls, new_state):
-        return 'on_{}'.format(new_state)
+    def process_on_state(self, new_state, **kwargs):
+        on_state = 'on_{}'.format(new_state)
+        return getattr(self, on_state)(**kwargs) if hasattr(self, on_state) else kwargs['response']
 
-    @classmethod
-    def _on_all(cls):
-        return 'on_all'
+    def process_on_all(self, **kwargs):
+        on_all = 'on_all'
+        return getattr(self, on_all)(**kwargs) if hasattr(self, on_all) else kwargs['response']
 
-    @classmethod
-    def fallback(cls, result):
-        return lambda obj, response, request: result
-
-    @classmethod
-    def process(cls, obj, current_state, new_state, request=None, via_admin=False):
-        response = {}
+    def process(self, obj, current_state, new_state, request=None, via_admin=False):
         kwargs = {
             'request': request,
-            'response': response,
+            'response': {},
             'obj': obj,
             'via_admin': via_admin,
         }
-        state_to_state = cls._state_to_state(current_state, new_state)
-        if hasattr(cls, state_to_state):
-            response = getattr(cls, state_to_state)(**kwargs) or response
-        on_state = cls._on_state(new_state)
-        if hasattr(cls, on_state):
-            response = getattr(cls, on_state)(**kwargs) or response
-        if hasattr(cls, 'on_all'):
-            response = getattr(cls, 'on_all')(**kwargs) or response
+        response = self.process_state_to_state(current_state, new_state, **kwargs)
+        response = self.process_on_state(new_state, **kwargs)
+        response = self.process_on_all(**kwargs)
         return response
 
     def check_user_permissions(self, user):

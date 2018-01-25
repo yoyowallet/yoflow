@@ -30,25 +30,21 @@ class ExampleFlow(flow.Flow):
         models.APPROVED: [],
     }
 
-    @classmethod
-    def draft_to_approved(cls, request, response, obj, via_admin):
+    def draft_to_approved(self, request, response, obj, via_admin):
         # {current_state}_to_{new_state} - allows for fine grain state changes
         pass
 
-    @classmethod
-    def on_draft(cls, request, response, obj, via_admin):
+    def on_draft(self, request, response, obj, via_admin):
         # on_{new_state} - catches all changes to new state
         if not via_admin:
             return {'some': 'value'}
 
-    @classmethod
-    def on_approved(cls, request, response, obj, via_admin):
+    def on_approved(self, request, response, obj, via_admin):
         if obj.parent.state != models.APPROVED:
             # check that parent is approved otherwise raise error
             raise exceptions.FlowException('Unable to approve because parent is not approved - approve parent first.')
 
-    @classmethod
-    def on_all(cls, request, response, obj, via_admin):
+    def on_all(self, request, response, obj, via_admin):
         # on_all - catch all state updates - always executed last
         response['all'] = 3
         return response
