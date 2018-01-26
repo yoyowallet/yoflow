@@ -1,3 +1,6 @@
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
 from django.urls import path
 
 from yoflow.views import view
@@ -50,6 +53,11 @@ class Flow(object):
         response = self.process_on_all(**kwargs)
         return response
 
-    def check_user_permissions(self, user):
-        # TODO raise exception if check fails
-        pass
+    def check_user_permissions(self, user, new_state):
+        try:
+            content_type = ContentType.objects.get_for_model(self.model)
+            permission = Permission.objects.get(content_type=content_type, codename=new_state)
+            if not user.has_perm(permission):
+                raise PermissionDenied()
+        except Permission.DoesNotExist:
+            return

@@ -80,7 +80,27 @@ For our possible models states this will provide:
 * `host:port/example/<pk>/draft/`
 * `host:port/example/<pk>/approved/`
 
-## TODO
+### Permissions
 
-* generate permissions automatically based on states (optional)
-* track state changes (datetime/user etc) (optional, django history/new table?)
+You can generate permissions for individual state changes - opt in invidual models by specifying permissions built from possible state choices.
+
+```python
+from yoflow import permissions
+
+class Model(models.Model):
+    STATES = (
+        (1, 'draft'),
+        (2, 'approved'),
+    )
+
+    class Meta:
+        permissions = permissions(STATES)
+```
+
+If permissions are included `request.user` is checked when a state change occurs - HTTP 403 is returned when the user does not have the correct permission.
+
+Alternatively, skip defining model permissions and handle this yourself in flow transition hooks, or use a combination of both.
+
+## Tracking State Changes
+
+[https://github.com/treyhunner/django-simple-history](https://github.com/treyhunner/django-simple-history)

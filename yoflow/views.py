@@ -8,7 +8,7 @@ def view(request, flow, **kwargs):
     current_state = getattr(obj, flow.field)
 
     # check user has permission to perform transition
-    flow.check_user_permissions(request.user)
+    flow.check_user_permissions(user=request.user, new_state=state)
 
     # check state change is legit
     flow.validate_state_change(current_state=current_state, new_state=new_state_name)
