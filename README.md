@@ -6,11 +6,12 @@ Define all possible states for your model using choices. Setup the mapping betwe
 
 ## Usage example
 
-Create new Django app (`example`) and add a model with a state field of your choice:
+Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices:
 
 ```python
 # example/models.py
 from django.db import models
+from yoflow import permissions
 
 class Example(models.Model):
     DRAFT = 1
@@ -21,6 +22,10 @@ class Example(models.Model):
     )
     name = models.CharField(max_length=256)
     state = models.IntegerField(choices=STATES, default=DRAFT)
+
+    class Meta:
+        # create permission for each state, skip if permissions not required
+        permissions = permissions(STATES)
 ```
 
 Create a `flows.py` module and define state transitions for our model:
@@ -28,7 +33,6 @@ Create a `flows.py` module and define state transitions for our model:
 ```python
 # example/flows.py
 from yoflow import flow
-
 from example import models
 
 class ExampleFlow(flow.Flow):
@@ -64,7 +68,6 @@ Generate URLs for state transitions
 ```python
 # example/urls.py
 from django.urls import path
-
 from example import flows
 
 urlpatterns = [
@@ -82,25 +85,29 @@ For our possible models states this will provide:
 
 ### Permissions
 
-You can generate permissions for individual state changes - opt in invidual models by specifying permissions built from possible state choices.
+If permissions are included `request.user` is checked when a state change occurs - HTTP 403 is returned when the user does not have the correct permission. Alternatively, skip defining model permissions and handle this yourself in flow transition hooks, or use a combination of both.
+
+### Admin Integration
+
+Support for admin via `FlowForm` and ` FlowAdmin` - limits available state choices based on transitions.
 
 ```python
-from yoflow import permissions
+# example/forms.py
+from django import forms
+from yoflow.forms import FlowForm
 
-class Model(models.Model):
-    STATES = (
-        (1, 'draft'),
-        (2, 'approved'),
-    )
-
-    class Meta:
-        permissions = permissions(STATES)
+class ExampleForm(FlowForm):
+    pass
 ```
 
-If permissions are included `request.user` is checked when a state change occurs - HTTP 403 is returned when the user does not have the correct permission.
+```python
+# example/admin.py
+from django.contrib import admin
+from example import models, flows, forms
+from yoflow.admin import FlowAdmin
 
-Alternatively, skip defining model permissions and handle this yourself in flow transition hooks, or use a combination of both.
-
-## Tracking State Changes
-
-[https://github.com/treyhunner/django-simple-history](https://github.com/treyhunner/django-simple-history)
+@admin.register(models.Example)
+class ExampleAdmin(FlowAdmin):
+    flow = flows.ParentFlow
+    form = forms.ParentForm
+```
