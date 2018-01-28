@@ -32,6 +32,7 @@ Create a `flows.py` module and define state transitions for our model:
 
 ```python
 # example/flows.py
+from django.http import JsonResponse
 from yoflow import flow
 from example import models
 
@@ -48,19 +49,21 @@ class ExampleFlow(flow.Flow):
         model.APPROVED: [],
     }
 
-    def draft_to_approved(self, request, response, obj, via_admin):
+    def draft_to_approved(self, new_state, obj, request, via_admin):
         # {current_state}_to_{new_state} - allows for fine grain state changes
         pass
 
-    def on_draft(self, request, response, obj, via_admin):
+    def on_draft(self, new_state, obj, request, via_admin):
         # on_{new_state} - catches all changes to new state
-        if not via_admin:
-            return {'some': 'value'}
+        pass
 
-    def on_all(self, request, response, obj, via_admin):
-        # on_all - catch all state updates - always executed last
-        response['on_all'] = True
-        return response
+    def on_all(self, new_state, obj, request, via_admin):
+        # on_all - catch all state updates
+        pass
+
+    def response(self, new_state, obj, request, via_admin):
+        # build response object here
+        return JsonResponse({'foo': 'bar'})
 ```
 
 Generate URLs for state transitions

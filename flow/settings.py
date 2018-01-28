@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'yoflow',
     'example',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
