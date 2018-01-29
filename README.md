@@ -17,7 +17,7 @@ Define all possible state transitions and state change behaviour for model insta
 
 ## Usage example
 
-Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices. **Do not use `all` as a value for choices - this is reserved for performing a special action inside flows.**
+Create new Django app (`example`), add a model with a state field of your choice, and define all possible states as choices. **Do not use `all`** as a value for choices - this is reserved for performing a special action inside flows.
 
 ```python
 # example/models.py
@@ -65,9 +65,11 @@ class ExampleFlow(flow.Flow):
         # {current_state}_to_{new_state} - allows for fine grain state changes
         pass
 
-    def on_draft(self, new_state, obj, request, meta, via_admin):
+    def on_approval(self, new_state, obj, request, meta, via_admin):
         # on_{new_state} - catches all changes to new state
-        pass
+        # save data with state transition, e.g. save approval message from request
+        meta['message'] = request.POST.get('message', None)
+        return meta
 
     def on_all(self, new_state, obj, request, meta, via_admin):
         # on_all - catch all state updates
@@ -89,7 +91,7 @@ urlpatterns = [
     path('<int:pk>/', flows.ExampleFlow().urls),
 ]
 
-# include urls in your project urls.py, e.g.
+# include example app urls in your project urls.py, e.g.
 # path('example/', include('example.urls')),
 ```
 
@@ -100,6 +102,30 @@ For our possible models states this will provide:
 | `GET`       | `/example/<pk>/history`  | Fetch history of state changes    |
 | `POST`      | `/example/<pk>/draft`    | Update instance to draft state    |
 | `POST`      | `/example/<pk>/approved` | Update instance to approved state |
+
+#### History Example
+
+```sh
+http localhost:8000/example/1/history/
+[
+    {
+        "created_at": "2018-01-29T16:21:59.829Z",
+        "meta": {
+            "comment": "This is an approval message"    # populated via on_approval
+        },
+        "new_state": "approved",
+        "previous_state": "draft",
+        "user": null
+    },
+    {
+        "created_at": "2018-01-29T16:21:57.794Z",
+        "meta": null,
+        "new_state": "draft",
+        "previous_state": "draft",
+        "user": null
+    }
+]
+```
 
 ### Authentication
 
