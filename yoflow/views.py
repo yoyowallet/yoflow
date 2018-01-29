@@ -1,5 +1,4 @@
 from django.db import transaction
-from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
 
@@ -39,5 +38,4 @@ def view(request, flow, **kwargs):
 def history(request, flow, **kwargs):
     flow.authenticate(request)
     obj = get_object(flow, kwargs[flow.lookup_field])
-    data = obj.yoflow_history.all().values('created_at', 'previous_state', 'new_state', 'user__username', 'meta')  # TODO update user__username
-    return JsonResponse(list(data), safe=False)
+    return flow.response_history(obj.yoflow_history.all())

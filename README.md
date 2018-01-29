@@ -128,6 +128,18 @@ http localhost:8000/example/1/history/
 ]
 ```
 
+Similarly to overriding the response format of state transitions with `response`, you can override the history response format by implementing `response_history` in your flow.
+
+```python
+class FormatHistoryFlow(flow.Flow):
+    def response_history(self, queryset):
+        """
+        :param queryset:    Django queryset of Flow instances
+        """
+        # only serialize username and meta data
+        return JSONResponse(list(queryset.values(user__username', 'meta')), safe=False)
+```
+
 ### Authentication
 
 By default we check if `request.user.is_authenticated` on all views - if this is not appropriate you can override this behaviour in your flow using `authenticate(self, request)`.
