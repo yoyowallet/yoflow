@@ -77,6 +77,7 @@ class ExampleFlow(flow.Flow):
 
     def response(self, obj):
         # build custom HTTP response - obj has new state persisted at this point
+        # note - this is not called via Django admin
         return JsonResponse({'foo': 'bar'})
 ```
 
