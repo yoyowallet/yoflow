@@ -113,16 +113,7 @@ If permissions are included `request.user` is checked when a state change occurs
 
 ### Admin Integration
 
-Support for admin via `FlowForm` and ` FlowAdmin` - limits available state choices based on transitions.
-
-```python
-# example/forms.py
-from django import forms
-from yoflow.forms import FlowForm
-
-class ExampleForm(FlowForm):
-    pass
-```
+Support for admin via `FlowAdmin` - limits available state choices based on transitions and shows inline historical state changes.
 
 ```python
 # example/admin.py
@@ -132,8 +123,8 @@ from yoflow.admin import FlowAdmin
 
 @admin.register(models.Example)
 class ExampleAdmin(FlowAdmin):
-    flow = flows.ParentFlow
-    form = forms.ParentForm
+    flow = flows.ExampleFlow
+    form = forms.ExampleForm
 ```
 
 ### TODO

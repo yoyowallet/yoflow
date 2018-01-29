@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from yoflow import models
+from yoflow import forms, models
 
 
 class FlowInline(GenericTabularInline):
@@ -26,6 +26,8 @@ class FlowInline(GenericTabularInline):
 
 
 class FlowAdmin(admin.ModelAdmin):
+
+    form = forms.FlowForm
 
     def get_form(self, request, obj, **kwargs):
         form = super().get_form(request, obj, **kwargs)
