@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
@@ -14,6 +15,7 @@ def authenticate(f):
 
 
 @require_http_methods(['POST'])
+@transaction.atomic
 @authenticate
 def view(request, flow, **kwargs):
     flow.authenticate(request)
@@ -25,11 +27,11 @@ def view(request, flow, **kwargs):
     # check state change is legit
     flow.validate_state_change(obj=obj, new_state=new_state_name)
     # run process hooks
-    response = flow.process(obj=obj, new_state=state, request=request)
+    flow.process(obj=obj, new_state=state, request=request)
     # update object state
     setattr(obj, flow.field, new_state_name)
     obj.save()
-    return response
+    return flow.response(obj=obj)
 
 
 @require_http_methods(['GET'])
@@ -37,5 +39,5 @@ def view(request, flow, **kwargs):
 def history(request, flow, **kwargs):
     flow.authenticate(request)
     obj = get_object(flow, kwargs[flow.lookup_field])
-    data = obj.yoflow_history.all().values('id', 'created_at', 'previous_state', 'new_state', 'user__username', 'meta')
+    data = obj.yoflow_history.all().values('created_at', 'previous_state', 'new_state', 'user__username', 'meta')  # TODO update user__username
     return JsonResponse(list(data), safe=False)

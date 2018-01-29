@@ -2,9 +2,9 @@
 
 > Django workflows
 
-Define all possible state transitions for your model instance and custom state change behaviour with provided hooks, automatically get:
+Define all possible state transitions and state change behaviour for model instances, automatically get:
 
-* REST endpoint to view instance history
+* REST endpoint to view instance state history
 * REST endpoint for each state transition
 * Permission validation per state transition
 * State transition tracking
@@ -17,7 +17,7 @@ Define all possible state transitions for your model instance and custom state c
 
 ## Usage example
 
-Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices. **Do not use `all` as a value for choices - this is reservered for performaing a special action inside flows.**
+Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices. **Do not use `all` as a value for choices - this is reserved for performing a special action inside flows.**
 
 ```python
 # example/models.py
@@ -73,8 +73,8 @@ class ExampleFlow(flow.Flow):
         # on_all - catch all state updates
         pass
 
-    def response(self, new_state, obj, request, via_admin):
-        # build response object here
+    def response(self, obj):
+        # build custom HTTP response - obj has new state persisted at this point
         return JsonResponse({'foo': 'bar'})
 ```
 

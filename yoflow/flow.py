@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
 from django.urls import path
 
 from yoflow.views import history, view
@@ -62,10 +63,12 @@ class Flow(object):
             obj.yoflow_history.create(
                 previous_state=current_state,
                 new_state=new_state,
-                meta=None,                      ## TODO replace with meta
-                user=request.user,
+                meta=meta,
+                user=request.user if request.user.is_anonymous is not True else None,
             )
-        return self.response(**kwargs)
+
+    def response(self, obj):
+        return HttpResponse(status=200)
 
     def check_user_permissions(self, user, new_state):
         try:

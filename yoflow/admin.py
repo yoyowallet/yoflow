@@ -8,22 +8,11 @@ class FlowInline(GenericTabularInline):
     model = models.Flow
     extra = 0
     exclude = ('content_type',)
+    readonly_fields = ('user', 'created_at', 'previous_state', 'new_state', 'meta')
     can_delete = False
-
-    def get_fields(self, request, obj=None):
-        fields = ('user', 'previous_state', 'new_state', 'meta')
-        if obj:
-            fields = fields + ('created_at',)
-        return fields
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            self.readonly_fields = [field.name for field in self.model._meta.fields]
-        return self.readonly_fields
 
     def has_add_permission(self, request):
         return False
-
 
 class FlowAdmin(admin.ModelAdmin):
 

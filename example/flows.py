@@ -46,6 +46,13 @@ class ExampleFlow(flow.Flow):
         # on_all - catch all state updates
         pass
 
-    def response(self, new_state, obj, request, via_admin):
+    def response(self, obj):
+        # post model update
         serializer = serializers.ExampleSerializer(obj)
         return JsonResponse(serializer.data)
+
+    def authenticate(self, request):
+        pass
+
+    def check_user_permissions(self, user, new_state):
+        pass
