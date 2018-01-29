@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.urls import path
 
-from yoflow.views import view
+from yoflow.views import history, view
 from yoflow.exceptions import FlowException
 
 
@@ -18,6 +18,9 @@ class Flow(object):
     def urls(self):
         states = dict(self.states).values()
         urlpatterns = [
+            path('history/', history, {'flow': self}, name='history'),
+        ]
+        urlpatterns += [
             path('{}/'.format(state), view, {'flow': self}, name=state) for state in states
         ]
         return urlpatterns, 'yoflow', 'yoflow'
@@ -30,29 +33,38 @@ class Flow(object):
                 self.states[new_state],
             ))
 
-    def process_state_to_state(self, new_state, **kwargs):
-        current_state = self.states[getattr(kwargs['obj'], self.field)]
+    def process_state_to_state(self, current_state, new_state, meta, **kwargs):
         state_to_state = '{}_to_{}'.format(current_state, new_state)
-        return getattr(self, state_to_state)(new_state=new_state, **kwargs) if hasattr(self, state_to_state) else None
+        if hasattr(self, state_to_state):
+            return getattr(self, state_to_state)(new_state=new_state, meta=meta, **kwargs)
 
-    def process_on_state(self, new_state, **kwargs):
+    def process_on_state(self, new_state, meta, **kwargs):
         on_state = 'on_{}'.format(new_state)
-        return getattr(self, on_state)(new_state=new_state, **kwargs) if hasattr(self, on_state) else None
+        return getattr(self, on_state)(new_state=new_state, meta=meta, **kwargs) if hasattr(self, on_state) else meta
 
-    def process_on_all(self, **kwargs):
+    def process_on_all(self, meta, **kwargs):
         on_all = 'on_all'
-        return getattr(self, on_all)(**kwargs) if hasattr(self, on_all) else None
+        return getattr(self, on_all)(meta=meta, **kwargs) if hasattr(self, on_all) else meta
 
-    def process(self, obj, new_state, request=None, via_admin=False):
+    def process(self, obj, new_state, request, via_admin=False):
+        current_state = self.states[getattr(obj, self.field)]
+        meta = {}
         kwargs = {
             'new_state': new_state,
             'obj': obj,
             'request': request,
             'via_admin': via_admin,
         }
-        self.process_state_to_state(**kwargs)
-        self.process_on_state(**kwargs)
-        self.process_on_all(**kwargs)
+        meta = self.process_state_to_state(current_state=current_state, meta={}, **kwargs) or meta
+        meta = self.process_on_state(meta=meta, **kwargs) or meta
+        meta = self.process_on_all(meta=meta, **kwargs) or meta
+        if hasattr(obj, 'yoflow_history'):
+            obj.yoflow_history.create(
+                previous_state=current_state,
+                new_state=new_state,
+                meta=None,                      ## TODO replace with meta
+                user=request.user,
+            )
         return self.response(**kwargs)
 
     def check_user_permissions(self, user, new_state):
@@ -63,3 +75,7 @@ class Flow(object):
                 raise PermissionDenied()
         except Permission.DoesNotExist:
             return
+
+    def authenticate(self, request):
+        if not request.user.is_authenticated:
+            raise PermissionDenied

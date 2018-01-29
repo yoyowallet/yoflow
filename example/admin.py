@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from example import models, flows, forms
 
-from yoflow.admin import FlowAdmin
+from yoflow.admin import FlowAdmin, FlowInline
 
 
 @admin.register(models.Parent)

@@ -4,6 +4,11 @@
 
 Define all possible states for your model using choices. Setup the mapping between states and define logic to run on state change requests. Automatically generate permissions and REST interface based on all possible states.
 
+## Requirements
+
+* Django 2.0
+* PostgreSQL ≥ 9.4
+
 ## Usage example
 
 Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices:
@@ -12,8 +17,9 @@ Create new Django app (`example`) and add a model with a state field of your cho
 # example/models.py
 from django.db import models
 from yoflow import permissions
+from yoflow.models import FlowModel
 
-class Example(models.Model):
+class Example(FlowModel):
     DRAFT = 1
     APPROVED = 2
     STATES = (
@@ -27,6 +33,8 @@ class Example(models.Model):
         # create permission for each state, skip if permissions not required
         permissions = permissions(STATES)
 ```
+
+**Do not use `all` as a value for choices - this is reservered for performaing a special action inside flows.**
 
 Create a `flows.py` module and define state transitions for our model:
 
@@ -49,15 +57,15 @@ class ExampleFlow(flow.Flow):
         model.APPROVED: [],
     }
 
-    def draft_to_approved(self, new_state, obj, request, via_admin):
+    def draft_to_approved(self, new_state, obj, request, meta, via_admin):
         # {current_state}_to_{new_state} - allows for fine grain state changes
         pass
 
-    def on_draft(self, new_state, obj, request, via_admin):
+    def on_draft(self, new_state, obj, request, meta, via_admin):
         # on_{new_state} - catches all changes to new state
         pass
 
-    def on_all(self, new_state, obj, request, via_admin):
+    def on_all(self, new_state, obj, request, meta, via_admin):
         # on_all - catch all state updates
         pass
 
@@ -83,8 +91,21 @@ urlpatterns = [
 
 For our possible models states this will provide:
 
-* `host:port/example/<pk>/draft/`
-* `host:port/example/<pk>/approved/`
+| HTTP Method | URI                      | Description                       |
+| ----------- | ------------------------ | --------------------------------- |
+| `GET`       | `/example/<pk>/history`  | Fetch history of state changes    |
+| `POST`      | `/example/<pk>/draft`    | Update instance to draft state    |
+| `POST`      | `/example/<pk>/approved` | Update instance to approved state |
+
+### Authentication
+
+By default we check if `request.user.is_authenticated` on all views - if this is not appropriate you can override this behaviour in your flow using `authenticate(self, request)`.
+
+```python
+class NoAuthenticationFlow(flow.Flow):
+    def authenticate(self, request):
+        pass
+```
 
 ### Permissions
 
@@ -114,3 +135,6 @@ class ExampleAdmin(FlowAdmin):
     flow = flows.ParentFlow
     form = forms.ParentForm
 ```
+
+### TODO
+* Django 1.11 support

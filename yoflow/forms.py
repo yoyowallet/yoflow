@@ -21,13 +21,14 @@ class FlowForm(forms.ModelForm):
         cleaned_data = super().clean()
         new_state = cleaned_data.get(self.flow.field)
         # call user defined flow logic for state change
-        try:
-            self.flow.process(
-                obj=self.instance,
-                current_state=self.flow.states[self.current_state],
-                new_state=self.flow.states[new_state],
-                via_admin=True,
-            )
-        except FlowException as e:
-            raise ValidationError(e, code='error')
+        if self.instance.pk:
+            try:
+                self.flow.process(
+                    obj=self.instance,
+                    new_state=self.flow.states[new_state],
+                    request=self.request,
+                    via_admin=True,
+                )
+            except FlowException as e:
+                raise ValidationError(e, code='error')
         return cleaned_data
