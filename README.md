@@ -116,14 +116,14 @@ http localhost:8000/example/1/history/
         },
         "new_state": "approved",
         "previous_state": "draft",
-        "user": null
+        "user": 2
     },
     {
         "created_at": "2018-01-29T16:21:57.794Z",
         "meta": null,
         "new_state": "draft",
         "previous_state": "draft",
-        "user": null
+        "user": 1
     }
 ]
 ```
@@ -137,7 +137,7 @@ class FormatHistoryFlow(flow.Flow):
         :param queryset:    Django queryset of Flow instances
         """
         # only serialize username and meta data
-        return JSONResponse(list(queryset.values(user__username', 'meta')), safe=False)
+        return JSONResponse(list(queryset.values('user__username', 'meta')), safe=False)
 ```
 
 ### Authentication
