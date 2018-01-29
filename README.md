@@ -1,8 +1,14 @@
 # yoflow
 
-> Unopinionated Django workflows
+> Django workflows
 
-Define all possible states for your model using choices. Setup the mapping between states and define logic to run on state change requests. Automatically generate permissions and REST interface based on all possible states.
+Define all possible state transitions for your model instance and custom state change behaviour with provided hooks, automatically get:
+
+* REST endpoint to view instance history
+* REST endpoint for each state transition
+* Permission validation per state transition
+* State transition tracking
+* Admin integration
 
 ## Requirements
 
@@ -11,7 +17,7 @@ Define all possible states for your model using choices. Setup the mapping betwe
 
 ## Usage example
 
-Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices:
+Create new Django app (`example`) and add a model with a state field of your choice - you **must** define all possible states as choices. **Do not use `all` as a value for choices - this is reservered for performaing a special action inside flows.**
 
 ```python
 # example/models.py
@@ -33,8 +39,6 @@ class Example(FlowModel):
         # create permission for each state, skip if permissions not required
         permissions = permissions(STATES)
 ```
-
-**Do not use `all` as a value for choices - this is reservered for performaing a special action inside flows.**
 
 Create a `flows.py` module and define state transitions for our model:
 
