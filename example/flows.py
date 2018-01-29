@@ -30,29 +30,21 @@ class ExampleFlow(flow.Flow):
     }
 
     def draft_to_approved(self, new_state, obj, request, meta, via_admin):
-        # {current_state}_to_{new_state} - allows for fine grain state changes
-        pass
-
-    def on_draft(self, new_state, obj, request, meta, via_admin):
-        # on_{new_state} - catches all changes to new state
-        return {'comment': 'I am sending this to draft!'}
+        return {'comment': 'I am approving this!'}
 
     def on_approved(self, new_state, obj, request, meta, via_admin):
         if obj.parent.state != models.APPROVED:
             # check that parent is approved otherwise raise error
             raise ValidationError('Unable to approve because parent is not approved - approve parent first.')
 
-    def on_all(self, new_state, obj, request, meta, via_admin):
-        # on_all - catch all state updates
-        pass
-
     def response(self, obj):
-        # post model update
         serializer = serializers.ExampleSerializer(obj)
         return JsonResponse(serializer.data)
 
     def authenticate(self, request):
+        # no auth for example - not recommended
         pass
 
     def check_user_permissions(self, user, new_state):
+        # no permission check for example - not recommended
         pass

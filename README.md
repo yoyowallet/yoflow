@@ -17,7 +17,7 @@ Define all possible state transitions and state change behaviour for model insta
 
 ## Usage example
 
-Create new Django app (`example`), add a model with a state field of your choice, and define all possible states as choices. **Do not use `all`** as a value for choices - this is reserved for performing a special action inside flows.
+Create new Django app (`example`), add a model with a state field of your choice, and define all possible states as choices.
 
 ```python
 # example/models.py
@@ -62,17 +62,17 @@ class ExampleFlow(flow.Flow):
     }
 
     def draft_to_approved(self, new_state, obj, request, meta, via_admin):
-        # {current_state}_to_{new_state} - allows for fine grain state changes
+        # {current_state}_to_{new_state} - called for specific state transition
         pass
 
     def on_approval(self, new_state, obj, request, meta, via_admin):
-        # on_{new_state} - catches all changes to new state
+        # on_{new_state} - called for all transitions to new state
         # save data with state transition, e.g. save approval message from request
         meta['message'] = request.POST.get('message', None)
         return meta
 
-    def on_all(self, new_state, obj, request, meta, via_admin):
-        # on_all - catch all state updates
+    def all(self, new_state, obj, request, meta, via_admin):
+        # called for all state transitions
         pass
 
     def response(self, obj):

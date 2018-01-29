@@ -43,9 +43,8 @@ class Flow(object):
         on_state = 'on_{}'.format(new_state)
         return getattr(self, on_state)(new_state=new_state, meta=meta, **kwargs) if hasattr(self, on_state) else meta
 
-    def process_on_all(self, meta, **kwargs):
-        on_all = 'on_all'
-        return getattr(self, on_all)(meta=meta, **kwargs) if hasattr(self, on_all) else meta
+    def all(self, meta, **kwargs):
+        return meta
 
     def process(self, obj, new_state, request, via_admin=False):
         current_state = self.states[getattr(obj, self.field)]
@@ -58,7 +57,7 @@ class Flow(object):
         }
         meta = self.process_state_to_state(current_state=current_state, meta={}, **kwargs) or meta
         meta = self.process_on_state(meta=meta, **kwargs) or meta
-        meta = self.process_on_all(meta=meta, **kwargs) or meta
+        meta = self.all(meta=meta, **kwargs) or meta
         if hasattr(obj, 'yoflow_history'):
             obj.yoflow_history.create(
                 previous_state=current_state,
