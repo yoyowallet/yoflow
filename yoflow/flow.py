@@ -67,10 +67,10 @@ class Flow(object):
             )
 
     def response(self, obj):
-        return JSONResponse({})
+        return JsonResponse({})
 
     def response_history(self, queryset):
-        return JSONResponse(
+        return JsonResponse(
             list(queryset.values('created_at', 'previous_state', 'new_state', 'user', 'meta')),
             safe=False,
         )
