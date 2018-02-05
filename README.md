@@ -51,27 +51,31 @@ from example import models
 class ExampleFlow(flow.Flow):
     model = models.Example
     states = dict(models.Example.STATES)
-    field = 'state'                         # default if not provided
-    lookup_field = 'pk'                     # default if not provided
+    field = 'state'                         # default value
+    lookup_field = 'pk'                     # default value
+    url_regex = '<int:pk>'                  # default value
 
     transitions = {
         # draft can remain in draft state or move to approved
-        model.DRAFT: [model.DRAFT, model.APPROVED],
+        model.DRAFT: [model.APPROVED],
         # once approved no more state changes can occur
         model.APPROVED: [],
     }
 
-    def draft_to_approved(self, new_state, obj, request, meta, via_admin):
+    def create(self, obj, json, meta, request):
+        # if create is defined then you can PUT new instances at the root URL
+        obj.name = json['name']
+
+    def draft_to_approved(self, new_state, obj, request, json, meta, via_admin):
         # {current_state}_to_{new_state} - called for specific state transition
         pass
 
-    def on_approval(self, new_state, obj, request, meta, via_admin):
+    def on_approval(self, new_state, obj, request, json, meta, via_admin):
         # on_{new_state} - called for all transitions to new state
         # save data with state transition, e.g. save approval message from request
-        meta['message'] = request.POST.get('message', None)
-        return meta
+        meta['message'] = json.get('message', None)
 
-    def all(self, new_state, obj, request, meta, via_admin):
+    def all(self, new_state, obj, request, json, meta, via_admin):
         # called for all state transitions
         pass
 
@@ -89,7 +93,7 @@ from django.urls import path
 from example import flows
 
 urlpatterns = [
-    path('<int:pk>/', flows.ExampleFlow().urls),
+    path('', flows.ExampleFlow().urls),
 ]
 
 # include example app urls in your project urls.py, e.g.
@@ -98,25 +102,39 @@ urlpatterns = [
 
 For our possible models states this will provide:
 
-| HTTP Method | URI                      | Description                       |
-| ----------- | ------------------------ | --------------------------------- |
-| `GET`       | `/example/<pk>/history`  | Fetch history of state changes    |
-| `POST`      | `/example/<pk>/draft`    | Update instance to draft state    |
-| `POST`      | `/example/<pk>/approved` | Update instance to approved state |
+| HTTP Method | URI                          | Description                            |
+| ----------- | ---------------------------- | -------------------------------------- |
+| `PUT`       | `/example/`                  | Create new instance with default state |
+| `GET`       | `/example/<int:pk>/history`  | Fetch history of state changes         |
+| `POST`      | `/example/<int:pk>/draft`    | Update instance to draft state         |
+| `POST`      | `/example/<int:pk>/approved` | Update instance to approved state      |
 
-#### History Example
+#### Example
 
 ```sh
-http localhost:8000/example/1/history/
+# create new instance
+http PUT localhost:9000/example/ name='test'
+{'foo': 'bar'}
+
+# update instance name and remain in default draft state
+http POST localhost:9000/example/1/draft/ name='updated'
+{'foo': 'bar'}
+
+# update instance state to approved with meta data
+http POST localhost:9000/example/1/approved/ message='This is now approved!'
+{'foo': 'bar'}
+
+# view history
+http GET localhost:9000/example/1/history/
 [
     {
         "created_at": "2018-01-29T16:21:59.829Z",
         "meta": {
-            "comment": "This is an approval message"    # populated via on_approval
+            "comment": "This is an approval message"
         },
         "new_state": "approved",
         "previous_state": "draft",
-        "user": 2
+        "user": 1
     },
     {
         "created_at": "2018-01-29T16:21:57.794Z",
