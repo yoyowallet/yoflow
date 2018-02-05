@@ -5,6 +5,9 @@ from yoflow.flow import Flow
 
 class TestViews(unittest.TestCase):
 
+    def test_creation(self):
+        pass
+
     def test_bad_state(self):
         pass
 
@@ -21,4 +24,7 @@ class TestViews(unittest.TestCase):
         pass
 
     def test_obj_state_updated(self):
+        pass
+
+    def test_instance_history(self):
         pass

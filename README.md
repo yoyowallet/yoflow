@@ -4,14 +4,15 @@
 
 Define all possible state transitions and state change behaviour for model instances, automatically get:
 
-* REST endpoint to view instance state history
-* REST endpoint for each state transition
-* Permission validation per state transition
-* State transition tracking
-* Admin integration
+* REST endpoint for instance creation
+* REST endpoints for defined state transitions
+* REST endpoint to view instance state transition history
+* Optional user permission validation per state transition
+* Django admin integration
 
 ## Requirements
 
+* Python3
 * Django 2.0
 * PostgreSQL ≥ 9.4
 
@@ -82,7 +83,7 @@ class ExampleFlow(flow.Flow):
     def response(self, obj):
         # build custom HTTP response - obj has new state persisted at this point
         # note - this is not called via Django admin
-        return JsonResponse({'foo': 'bar'})
+        return JsonResponse({'name': obj.name, 'state': obj.get_state_display()})
 ```
 
 Generate URLs for state transitions
@@ -114,15 +115,15 @@ For our possible models states this will provide:
 ```sh
 # create new instance
 http PUT localhost:9000/example/ name='test'
-{'foo': 'bar'}
+{'name': 'test', 'state': 'draft'}
 
 # update instance name and remain in default draft state
 http POST localhost:9000/example/1/draft/ name='updated'
-{'foo': 'bar'}
+{'name': 'updated', 'state': 'draft'}
 
 # update instance state to approved with meta data
 http POST localhost:9000/example/1/approved/ message='This is now approved!'
-{'foo': 'bar'}
+{'name': 'updated', 'state': 'approved'}
 
 # view history
 http GET localhost:9000/example/1/history/
