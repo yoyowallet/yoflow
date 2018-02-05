@@ -16,4 +16,5 @@ class ParentAdmin(FlowAdmin):
 class ExampleAdmin(FlowAdmin):
     flow = flows.ExampleFlow
     list_display = ('name', 'state')
+    readonly_fields = ('uuid',)
     list_filter = ('state',)

@@ -28,6 +28,8 @@ class ExampleFlow(flow.Flow):
         models.DRAFT: [models.DRAFT, models.APPROVED],
         models.APPROVED: [],
     }
+    url_regex = '<str:uuid>'
+    lookup_field = 'uuid'
 
     def draft_to_approved(self, new_state, obj, request, meta, via_admin):
         return {'comment': 'I am approving this!'}

@@ -8,15 +8,19 @@ from django.db import models
 class Flow(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    previous_state = models.CharField(max_length=256)
+    previous_state = models.CharField(max_length=256, null=True)
     new_state = models.CharField(max_length=256)
     meta = JSONField(null=True, blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
 
+    def __str__(self):
+        return '{} {}'.format(self.content_type, self.object_id)
+
 
 class FlowModel(models.Model):
+    yoflow_created = models.DateTimeField(auto_now_add=True)
     yoflow_history = GenericRelation(Flow)
 
     class Meta:
