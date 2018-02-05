@@ -130,7 +130,7 @@ http GET localhost:9000/example/1/history/
     {
         "created_at": "2018-01-29T16:21:59.829Z",
         "meta": {
-            "comment": "This is an approval message"
+            "comment": "This is now approved!"
         },
         "new_state": "approved",
         "previous_state": "draft",
