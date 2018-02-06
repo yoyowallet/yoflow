@@ -22,7 +22,7 @@ def yoflow(f):
     return wrapper
 
 
-@require_http_methods(['PUT'])
+@require_http_methods(['POST'])
 @transaction.atomic
 @yoflow
 def create(request, flow, **kwargs):

@@ -71,7 +71,7 @@ class ExampleFlow(flow.Flow):
         # {current_state}_to_{new_state} - called for specific state transition
         pass
 
-    def on_approval(self, new_state, obj, request, json, meta, via_admin):
+    def on_approved(self, new_state, obj, request, json, meta, via_admin):
         # on_{new_state} - called for all transitions to new state
         # save data with state transition, e.g. save approval message from request
         meta['message'] = json.get('message', None)
@@ -105,7 +105,7 @@ For our possible models states this will provide:
 
 | HTTP Method | URI                          | Description                            |
 | ----------- | ---------------------------- | -------------------------------------- |
-| `PUT`       | `/example/`                  | Create new instance with default state |
+| `POST`      | `/example/`                  | Create new instance with default state |
 | `GET`       | `/example/<int:pk>/history`  | Fetch history of state changes         |
 | `POST`      | `/example/<int:pk>/draft`    | Update instance to draft state         |
 | `POST`      | `/example/<int:pk>/approved` | Update instance to approved state      |
@@ -131,7 +131,7 @@ http GET localhost:9000/example/1/history/
     {
         "created_at": "2018-01-29T16:21:59.829Z",
         "meta": {
-            "comment": "This is now approved!"
+            "message": "This is now approved!"
         },
         "new_state": "approved",
         "previous_state": "draft",
