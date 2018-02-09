@@ -28,4 +28,4 @@ class Campaign(FlowModel):
     state = models.IntegerField(choices=STATES, default=DRAFT)
 
     def __str__(self):
-        return "Campaign {}".format(self.pk)
+        return 'Campaign {}'.format(self.pk)

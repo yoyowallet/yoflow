@@ -64,7 +64,7 @@ class ExampleFlow(flow.Flow):
     }
 
     def create(self, obj, json, meta, request):
-        # if create is defined then you can PUT new instances at the root URL
+        # if create is defined then you can POST new instances at the root URL
         obj.name = json['name']
 
     def draft_to_approved(self, new_state, obj, request, json, meta, via_admin):
@@ -114,7 +114,7 @@ For our possible models states this will provide:
 
 ```sh
 # create new instance
-http PUT localhost:9000/example/ name='test'
+http POST localhost:9000/example/ name='test'
 {'name': 'test', 'state': 'draft'}
 
 # update instance name and remain in default draft state
@@ -141,7 +141,7 @@ http GET localhost:9000/example/1/history/
         "created_at": "2018-01-29T16:21:57.794Z",
         "meta": null,
         "new_state": "draft",
-        "previous_state": "draft",
+        "previous_state": null,
         "user": 1
     }
 ]
