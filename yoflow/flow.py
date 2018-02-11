@@ -11,11 +11,15 @@ from yoflow.exceptions import InvalidTransition, PermissionDenied
 
 class Flow(object):
 
+    DEFAULT_FIELD = 'state'
+    DEFAULT_LOOKUP_FIELD = 'pk'
+    DEFAULT_URL_REGEX = '<int:pk>'
+
     def __init__(self):
         self.reversed_states = {v: k for k, v in self.states.items()}
-        self.field = self.field if hasattr(self, 'field') else 'state'
-        self.lookup_field = self.lookup_field if hasattr(self, 'lookup_field') else 'pk'
-        self.url_regex = self.url_regex if hasattr(self, 'url_regex') else '<int:pk>'
+        self.field = self.field if hasattr(self, 'field') else self.DEFAULT_FIELD
+        self.lookup_field = self.lookup_field if hasattr(self, 'lookup_field') else self.DEFAULT_LOOKUP_FIELD
+        self.url_regex = self.url_regex if hasattr(self, 'url_regex') else self.DEFAULT_URL_REGEX
         self.create_endpoint = True if hasattr(self, 'create') else False
 
     @property
@@ -31,7 +35,7 @@ class Flow(object):
             urlpatterns += [
                 path('', create, {'flow': self}, name='create'),
             ]
-        return urlpatterns, 'yoflow', self.model._meta.app_label
+        return urlpatterns, 'yoflow', '{}:{}'.format(self.model._meta.app_label, str(self.model._meta))
 
     def validate_state_change(self, obj, new_state):
         current_state = getattr(obj, self.field)
@@ -66,7 +70,7 @@ class Flow(object):
         if hasattr(obj, 'yoflow_history'):
             obj.yoflow_history.create(
                 previous_state=None,
-                new_state=obj.get_state_display(),
+                new_state=getattr(obj, 'get_{}_display'.format(self.field))(),
                 meta=meta,
                 user=request.user if request.user.is_anonymous is not True else None,
             )

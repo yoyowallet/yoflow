@@ -135,3 +135,5 @@ webpack-stats.json
 /assets/app.js
 
 db.sqlite3
+.pytest_cache/
+.vscode/

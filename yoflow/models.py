@@ -12,7 +12,7 @@ class Flow(models.Model):
     new_state = models.CharField(max_length=256)
     meta = JSONField(null=True, blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
+    object_id = models.CharField(max_length=256)
     content_object = GenericForeignKey()
 
     def __str__(self):

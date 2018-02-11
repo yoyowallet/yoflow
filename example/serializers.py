@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from example import models
 
+
 class ParentSerializer(serializers.ModelSerializer):
     state = serializers.SerializerMethodField()
 
@@ -12,13 +13,13 @@ class ParentSerializer(serializers.ModelSerializer):
         return obj.get_state_display()
 
 
-class ExampleSerializer(serializers.ModelSerializer):
-    state = serializers.SerializerMethodField()
+class ChildSerializer(serializers.ModelSerializer):
+    state = serializers.SerializerMethodField(source='custom_state_field')
     parent = ParentSerializer()
 
     class Meta:
-        model = models.Example
+        model = models.Child
         fields = ('name', 'state', 'parent')
 
     def get_state(self, obj):
-        return obj.get_state_display()
+        return obj.get_custom_state_field_display()

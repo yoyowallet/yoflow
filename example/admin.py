@@ -12,9 +12,9 @@ class ParentAdmin(FlowAdmin):
     list_filter = ('state',)
 
 
-@admin.register(models.Example)
+@admin.register(models.Child)
 class ExampleAdmin(FlowAdmin):
-    flow = flows.ExampleFlow
-    list_display = ('name', 'state')
+    flow = flows.ChildFlow
+    list_display = ('name', 'custom_state_field')
     readonly_fields = ('uuid',)
-    list_filter = ('state',)
+    list_filter = ('custom_state_field',)

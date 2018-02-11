@@ -16,5 +16,9 @@ class InvalidTransition(FlowException):
     status_code = 405
 
 
+class ObjectNotFound(FlowException):
+    status_code = 404
+
+
 class PermissionDenied(FlowException):
     status_code = 403

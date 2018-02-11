@@ -5,7 +5,10 @@ from yoflow import exceptions
 
 
 def get_object(flow, value):
-    return flow.model.objects.get(**{flow.lookup_field: value})
+    try:
+        return flow.model.objects.get(**{flow.lookup_field: value})
+    except flow.model.DoesNotExist:
+        raise exceptions.ObjectNotFound
 
 
 def yoflow(f):
@@ -38,12 +41,12 @@ def create(request, flow, **kwargs):
 @yoflow
 def view(request, flow, **kwargs):
     state = request.path.strip('/').split('/')[-1]
-    new_state_name = flow.reversed_states[state]
+    new_state_id = flow.reversed_states[state]
     obj = get_object(flow, kwargs[flow.lookup_field])
     flow.check_user_permissions(user=request.user, new_state=state)
-    flow.validate_state_change(obj=obj, new_state=new_state_name)
+    flow.validate_state_change(obj=obj, new_state=new_state_id)
     flow.process(obj=obj, new_state=state, request=request)
-    setattr(obj, flow.field, new_state_name)
+    setattr(obj, flow.field, new_state_id)
     obj.save()
     return flow.response(obj=obj)
 
