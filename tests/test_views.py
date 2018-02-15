@@ -6,7 +6,6 @@ from django.test.utils import override_settings
 from yoflow import exceptions, views
 
 
-@pytest.mark.django_db
 def test_create_instance_not_supported(rf, example_parent_flow, user):
     request = rf.post('/example/parent/draft/')
     request.user = user

@@ -67,12 +67,15 @@ class ExampleFlow(flow.Flow):
         # if create is defined then you can POST new instances at the root URL
         obj.name = json['name']
 
+    def on_draft(self, new_state, obj, request, json, meta, via_admin):
+        # on_{new_state} - called for all transitions to new state
+        obj.name = json.get('name', obj.name)  # update obj field if available in POST json
+
     def draft_to_approved(self, new_state, obj, request, json, meta, via_admin):
         # {current_state}_to_{new_state} - called for specific state transition
         pass
 
     def on_approved(self, new_state, obj, request, json, meta, via_admin):
-        # on_{new_state} - called for all transitions to new state
         # save data with state transition, e.g. save approval message from request
         meta['message'] = json.get('message', None)
 
@@ -191,3 +194,5 @@ class ExampleAdmin(FlowAdmin):
 
 ### TODO
 * Django 1.11 support
+* Fix permission generation - is there a better way than using model meta?
+* Return JsonResponse when no matching URL (404)
