@@ -93,15 +93,15 @@ Generate URLs for state transitions
 
 ```python
 # example/urls.py
-from django.urls import path
+from django.conf.urls import url
 from example import flows
 
 urlpatterns = [
-    path('', flows.ExampleFlow().urls),
+    url('^$', flows.ExampleFlow().urls),
 ]
 
 # include example app urls in your project urls.py, e.g.
-# path('example/', include('example.urls')),
+# url('^example/', include('example.urls')),
 ```
 
 For our possible models states this will provide:
