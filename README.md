@@ -15,9 +15,18 @@ Define all possible state transitions and state change behaviour for model insta
 * Django 1.11
 * PostgreSQL ≥ 9.4 (JSON required)
 
-## Usage example
+## Example
 
-Create new Django app (`example`), add a model with a state field of your choice, and define all possible states as choices.
+There are four main steps to create our workflow:
+
+1. Create a standard Django model
+2. Define flow permissions
+3. Write any custom flow transition logic
+4. Generate and integrate workflow URLs
+
+### Example Model
+
+Create new Django app (`example`), add a model extending `FlowModel` with a state field of your choice, and define all possible states as choices. `FlowModel` will automatically take care of tracking state transitions.
 
 ```python
 # example/models.py
@@ -35,7 +44,44 @@ class Example(FlowModel):
     state = models.IntegerField(choices=STATES, default=DRAFT)
 ```
 
-Create a `flows.py` module and define state transitions for our model:
+### Example Permissions
+
+By default most endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute all permission checking - this is not recommended - instead you should access the request object and raise an exception to prevent further changes.
+
+```python
+# example/permissions.py
+from yoflow import permissions
+
+class ExamplePermissions(permissions.Permissions):
+
+    @staticmethod
+    def authenticate(request):
+        pass
+
+    @staticmethod
+    def can_create(request):
+        pass
+
+    @staticmethod
+    def can_delete(request):
+        pass
+
+    @staticmethod
+    def can_view_history(request):
+        pass
+
+    @staticmethod
+    def has_draft_permission(request):
+        pass
+
+    @staticmethod
+    def has_approved_permission(request):
+        pass
+```
+
+### Example Flow
+
+Our flow defines all possible transitions between model states and any custom logic to run from various endpoints.
 
 ```python
 # example/flows.py
@@ -46,6 +92,7 @@ from example import models
 class ExampleFlow(flow.Flow):
     model = models.Example
     states = dict(models.Example.STATES)
+    permissions = permissions.ExamplePermissions
     state_field = 'state'                   # default value
     lookup_field = 'pk'                     # default value
     url_regex = '(?P<pk>\d+)'               # default value
@@ -83,7 +130,9 @@ class ExampleFlow(flow.Flow):
         return JsonResponse({'name': obj.name, 'state': obj.get_state_display()})
 ```
 
-Generate URLs for state transitions
+### Example URLs
+
+Finally, expose our workflow URLs by including them in your normal `urls.py`.
 
 ```python
 # example/urls.py
@@ -98,7 +147,7 @@ urlpatterns = [
 # url('^example/', include('example.urls')),
 ```
 
-For our possible models states this will provide:
+For our possible model states this will provide:
 
 | HTTP Method | URI                          | Description                            |
 | ----------- | ---------------------------- | -------------------------------------- |
@@ -108,7 +157,7 @@ For our possible models states this will provide:
 | `POST`      | `/example/<int:pk>/approved` | Update instance to approved state      |
 | `DELETE`    | `/example/<int:pk>/`         | Delete instance from database          | 
 
-#### Example
+#### HTTP Example
 
 ```sh
 # create new instance
@@ -133,14 +182,14 @@ $ http GET localhost:9000/example/1/history/
         },
         "new_state": "approved",
         "previous_state": "draft",
-        "user": 1
+        "user": null
     },
     {
         "created_at": "2018-01-29T16:21:57.794Z",
         "meta": null,
         "new_state": "draft",
         "previous_state": null,
-        "user": 1
+        "user": null
     }
 ]
 ```
@@ -150,9 +199,6 @@ Similarly to overriding the response format of state transitions with `response`
 ```python
 class FormatHistoryFlow(flow.Flow):
     def response_history(self, queryset):
-        """
-        :param queryset:    Django queryset of Flow instances
-        """
         # only serialize username and meta data
         return JSONResponse(list(queryset.values('user__username', 'meta')), safe=False)
 ```

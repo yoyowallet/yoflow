@@ -71,7 +71,7 @@ class Flow(object):
                 previous_state=None,
                 new_state=getattr(obj, 'get_{}_display'.format(self.state_field))(),
                 meta=meta,
-                user=request.user if request.user.is_anonymous is not True else None,
+                user=request.user if request.user.is_anonymous() is not True else None,
             )
         return obj
 
@@ -94,7 +94,7 @@ class Flow(object):
                 previous_state=current_state,
                 new_state=new_state,
                 meta=meta,
-                user=request.user if request.user.is_anonymous is not True else None,
+                user=request.user if request.user.is_anonymous() is not True else None,
             )
 
     def response(self, obj):
