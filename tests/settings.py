@@ -127,3 +127,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+YOFLOW_STATE_MAX_LENGTH = 256
+YOFLOW_OBJECT_ID_MAX_LENGTH = 256

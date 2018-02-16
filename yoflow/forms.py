@@ -22,7 +22,7 @@ class FlowForm(forms.ModelForm):
         new_state = cleaned_data.get(self.flow.field)
         # call user defined flow logic for state change
         try:
-            if self.instance.yoflow_created:
+            if self.instance.yoflow_created:  # TODO can we remove this column?
                 self.flow.process(
                     obj=self.instance,
                     new_state=self.flow.states[new_state],

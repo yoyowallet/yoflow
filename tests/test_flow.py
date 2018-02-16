@@ -23,21 +23,13 @@ def test_init_overrides(example_child_flow):
 
 def test_basic_flow_urls(example_parent_flow):
     urls = example_parent_flow.urls[0]
-    assert len(urls) == 4
-    assert urls[0].name == 'history'
-    assert urls[1].name == 'draft'
-    assert urls[2].name == 'approved'
-    assert urls[3].name == 'final'
-
-
-def test_flow_with_create_urls(example_child_flow):
-    urls = example_child_flow.urls[0]
-    assert len(urls) == 5
-    assert urls[0].name == 'history'
-    assert urls[1].name == 'draft'
-    assert urls[2].name == 'approved'
-    assert urls[3].name == 'final'
-    assert urls[4].name == 'create'
+    assert len(urls) == 6
+    assert urls[0].name == 'draft'
+    assert urls[1].name == 'approved'
+    assert urls[2].name == 'final'
+    assert urls[3].name == 'create'
+    assert urls[4].name == 'delete'
+    assert urls[5].name == 'history'
 
 
 # @pytest.mark.django_db

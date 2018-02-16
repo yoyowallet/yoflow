@@ -4,17 +4,16 @@
 
 Define all possible state transitions and state change behaviour for model instances, automatically get:
 
-* REST endpoint for instance creation/deletion
-* REST endpoints for defined state transitions
+* REST endpoints for creation, deletion, and individual state transitions
 * REST endpoint to view instance state transition history
-* Optional user permission validation per state transition
+* Configurable user validation for all endpoints
 * Django admin integration
 
 ## Requirements
 
 * Python3
 * Django 1.11
-* PostgreSQL ≥ 9.4
+* PostgreSQL ≥ 9.4 (JSON required)
 
 ## Usage example
 
@@ -23,7 +22,6 @@ Create new Django app (`example`), add a model with a state field of your choice
 ```python
 # example/models.py
 from django.db import models
-from yoflow import permissions
 from yoflow.models import FlowModel
 
 class Example(FlowModel):
@@ -35,10 +33,6 @@ class Example(FlowModel):
     )
     name = models.CharField(max_length=256)
     state = models.IntegerField(choices=STATES, default=DRAFT)
-
-    class Meta:
-        # create permission for each state, skip if permissions not required
-        permissions = permissions(STATES)
 ```
 
 Create a `flows.py` module and define state transitions for our model:
@@ -93,7 +87,7 @@ Generate URLs for state transitions
 
 ```python
 # example/urls.py
-from django.conf.urls import url
+from django.conf.urls import urlw
 from example import flows
 
 urlpatterns = [
@@ -118,19 +112,19 @@ For our possible models states this will provide:
 
 ```sh
 # create new instance
-http POST localhost:9000/example/ name='test'
+$ http POST localhost:9000/example/ name='test'
 {'name': 'test', 'state': 'draft'}
 
 # update instance name and remain in default draft state
-http POST localhost:9000/example/1/draft/ name='updated'
+$ http POST localhost:9000/example/1/draft/ name='updated'
 {'name': 'updated', 'state': 'draft'}
 
 # update instance state to approved with meta data
-http POST localhost:9000/example/1/approved/ message='This is now approved!'
+$ http POST localhost:9000/example/1/approved/ message='This is now approved!'
 {'name': 'updated', 'state': 'approved'}
 
 # view history
-http GET localhost:9000/example/1/history/
+$ http GET localhost:9000/example/1/history/
 [
     {
         "created_at": "2018-01-29T16:21:59.829Z",
@@ -151,7 +145,7 @@ http GET localhost:9000/example/1/history/
 ]
 ```
 
-Similarly to overriding the response format of state transitions with `response`, you can override the history response format by implementing `response_history` in your flow.
+Similarly to overriding the response format of state transitions with `response`, you can override the history response format by implementing `response_history` in your flow:
 
 ```python
 class FormatHistoryFlow(flow.Flow):
@@ -191,7 +185,7 @@ class ExampleFlow(flow.Flow):
 
 ### Admin Integration
 
-Support for admin via `FlowAdmin` - limits available state choices based on transitions and shows inline historical state changes.
+Support for admin via `FlowAdmin` - limits available state choices based on transitions and shows inline historical state changes:
 
 ```python
 # example/admin.py
@@ -205,5 +199,17 @@ class ExampleAdmin(FlowAdmin):
     form = forms.ExampleForm
 ```
 
+### Settings
+
+##### `YOFLOW_STATE_MAX_LENGTH` (default=256)
+
+Max length of `CharField` used to store value of before/after state transition.
+
+##### `YOFLOW_OBJECT_ID_MAX_LENGTH` (default=256)
+
+Max length of `CharField` used to store object pk. Usually this will be an integer primary key but in some cases you might wish to use uuid or something else.
+
 ### TODO
 * Return JsonResponse when no matching URL (404)
+* Store `Flow` previous_state/new_state as choice value and serialise?
+* Tests

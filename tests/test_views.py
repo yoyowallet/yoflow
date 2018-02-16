@@ -14,12 +14,11 @@ def test_create_instance_not_supported(rf, example_parent_flow, user):
 
 
 @pytest.mark.django_db
-def test_create_instance_supported(rf, parent, example_child_flow, user):
-    # TODO add permission support and tests for creation
-    payload = json.dumps({'parent': parent.pk, 'name': 'child'})
-    request = rf.post('/example/child/draft/', payload, content_type='application/json')
+def test_create_instance_supported(rf, example_parent_flow, user):
+    payload = json.dumps({'name': 'parent'})
+    request = rf.post('/example/parent/', payload, content_type='application/json')
     request.user = user
-    response = views.create(request, example_child_flow)
+    response = views.create(request, example_parent_flow)
 
 
 def test_bad_state(rf, example_parent_flow, user):
