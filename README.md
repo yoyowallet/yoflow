@@ -167,11 +167,13 @@ class FormatHistoryFlow(flow.Flow):
 
 You can override the following authentication/permission checks:
 
-* `authenticate`
-* `can_create`
-* `can_delete`
-* `can_view_history`
-* `has_{state}_permission`
+| Function                 | Description                               | Default Value                        |
+| -------------------------|-------------------------------------------|--------------------------------------|
+| `authenticate`           | Initial test on all requests              | `request.user.is_authenticated`      |
+| `can_create`             | Subsequent test on create endpoint        | `yoflow.exceptions.PermissionDenied` |
+| `can_delete`             | Subsequent test on delete endpoint        | `yoflow.exceptions.PermissionDenied` |
+| `can_view_history`       | Subsequent test on history endpoint       | `yoflow.exceptions.PermissionDenied` |
+| `has_{state}_permission` | Subsequent test on individual transitions | `yoflow.exceptions.PermissionDenied` |
 
 To override any of these; extend the yoflow permissions class and link to your defined flow:
 
@@ -186,26 +188,6 @@ class ExamplePermissions(permissions.Permissions):
 class ExampleFlow(flow.Flow):
     permissions = ExamplePermissions
 ```
-
-#### `authenticate`
-
-> Called as the first action on **all** requests, by default checks `request.user.is_authenticated`
-
-#### `can_create`
-
-> Called when new instances created, by default raises yoflow `PermissionDenied` exception
-
-#### `can_delete`
-
-`NotImplemented` - TODO
-
-#### `can_view_history `
-
-> Called on requests for individual item history, by default raises yoflow `PermissionDenied` exception
-
-#### `has_{state}_permission`
-
-> Called before processing state change, by default raises yoflow `PermissionDenied` exception
 
 ### Admin Integration
 
