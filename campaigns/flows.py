@@ -51,7 +51,3 @@ class CampaignFlow(flow.Flow):
     def on_deleted(self, obj, **kwargs):
         utils.cancel_campaign(campaign=obj)
         utils.send_deleted_email(campaign=obj)
-
-    def authenticate(self, request):
-        # TODO validate user has access to retailer
-        pass

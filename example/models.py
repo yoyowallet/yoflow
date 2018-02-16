@@ -4,7 +4,6 @@ import uuid
 
 from django.db import models
 
-from yoflow import permissions
 from yoflow.models import FlowModel
 
 
@@ -34,6 +33,3 @@ class Child(FlowModel):
 
     def __str__(self):
         return '{}'.format(self.name)
-
-    class Meta:
-        permissions = permissions(STATES)

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.exceptions import ValidationError
 from yoflow import exceptions, flow
-from example import models, serializers
+from example import models, permissions, serializers
 
 
 class ParentFlow(flow.Flow):
@@ -10,11 +10,15 @@ class ParentFlow(flow.Flow):
     """
     model = models.Parent
     states = dict(models.STATES)
+    permissions = permissions.ParentPermissions
     transitions = {
         models.DRAFT: [models.APPROVED],
         models.APPROVED: [models.FINAL],
         models.FINAL: [],
     }
+
+    def create(self, obj, json, **kwargs):
+        obj.name = json['name']
 
 
 class ChildFlow(flow.Flow):
@@ -47,11 +51,3 @@ class ChildFlow(flow.Flow):
     def response(self, obj):
         serializer = serializers.ChildSerializer(obj)
         return JsonResponse(serializer.data)
-
-    def authenticate(self, request):
-        # no auth for example - not recommended
-        pass
-
-    def check_user_permissions(self, user, new_state):
-        # no permission check for example - not recommended
-        pass

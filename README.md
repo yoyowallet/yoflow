@@ -162,19 +162,49 @@ class FormatHistoryFlow(flow.Flow):
         return JSONResponse(list(queryset.values('user__username', 'meta')), safe=False)
 ```
 
-### Authentication
+## Authentication & Permissions
 
-By default we check if `request.user.is_authenticated` on all views - if this is not appropriate you can override this behaviour in your flow using `authenticate(self, request)`.
+You can override the following authentication/permission checks:
+
+* `authenticate`
+* `can_create`
+* `can_delete`
+* `can_view_history`
+* `has_{state}_permission`
+
+To override any of these; extend the yoflow permissions class and link to your defined flow:
 
 ```python
-class NoAuthenticationFlow(flow.Flow):
-    def authenticate(self, request):
-        pass
+from yoflow import flow, permissions
+
+class ExamplePermissions(permissions.Permissions):
+    @staticmethod
+    def authenticate(request):
+        pass  # allow all requests
+        
+class ExampleFlow(flow.Flow):
+    permissions = ExamplePermissions
 ```
 
-### Permissions
+#### `authenticate`
 
-If permissions are included `request.user` is checked when a state change occurs - HTTP 403 is returned when the user does not have the correct permission. Alternatively, skip defining model permissions and handle this yourself in flow transition hooks, or use a combination of both.
+> Called as the first action on **all** requests, by default checks `request.user.is_authenticated`
+
+#### `can_create`
+
+> Called when new instances created, by default raises yoflow `PermissionDenied` exception
+
+#### `can_delete`
+
+`NotImplemented` - TODO
+
+#### `can_view_history `
+
+> Called on requests for individual item history, by default raises yoflow `PermissionDenied` exception
+
+#### `has_{state}_permission`
+
+> Called before processing state change, by default raises yoflow `PermissionDenied` exception
 
 ### Admin Integration
 
@@ -194,5 +224,5 @@ class ExampleAdmin(FlowAdmin):
 
 ### TODO
 * Django 1.11 support
-* Fix permission generation - is there a better way than using model meta?
 * Return JsonResponse when no matching URL (404)
+* Add support for DELETE operations

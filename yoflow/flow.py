@@ -5,8 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
 from django.urls import path
 
-from yoflow.views import create, history, view
 from yoflow.exceptions import InvalidTransition, PermissionDenied
+from yoflow.permissions import Permissions
+from yoflow.views import create, history, view
 
 
 class Flow(object):
@@ -21,6 +22,7 @@ class Flow(object):
         self.lookup_field = self.lookup_field if hasattr(self, 'lookup_field') else self.DEFAULT_LOOKUP_FIELD
         self.url_regex = self.url_regex if hasattr(self, 'url_regex') else self.DEFAULT_URL_REGEX
         self.create_endpoint = True if hasattr(self, 'create') else False
+        self.permissions = self.permissions if hasattr(self, 'permissions') else Permissions
 
     @property
     def urls(self):
@@ -107,18 +109,12 @@ class Flow(object):
             safe=False,
         )
 
-    def check_user_permissions(self, user, new_state):
-        try:
-            content_type = ContentType.objects.get_for_model(self.model)
-            permission = Permission.objects.get(content_type=content_type, codename=new_state)
-            if not user.has_perm(permission):
-                raise PermissionDenied
-        except Permission.DoesNotExist:
-            return
-
-    def authenticate(self, request):
-        if not request.user.is_authenticated:
-            raise PermissionDenied('User not authenticated')
+    def check_permissions(self, request, new_state):
+        permission_check = 'has_{}_permission'.format(new_state)
+        if hasattr(self.permissions, permission_check):
+            getattr(self.permissions, permission_check)(request)
+        else:
+            raise PermissionDenied('You do not have permission for {} state'.format(new_state))
 
     def to_json(self, request):
         return json.loads(request.body)

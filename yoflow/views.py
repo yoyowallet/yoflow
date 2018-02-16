@@ -18,7 +18,7 @@ def yoflow(f):
     """
     def wrapper(request, flow, *args, **kwargs):
         try:
-            flow.authenticate(request)
+            flow.permissions.authenticate(request)
             return f(request, flow, *args, **kwargs)
         except Exception as e:
             raise e if isinstance(e, exceptions.FlowException) else exceptions.FlowException
@@ -31,7 +31,7 @@ def yoflow(f):
 def create(request, flow, **kwargs):
     default = flow.model._meta.get_field(flow.field).get_default()
     state = flow.states[default]
-    flow.check_user_permissions(user=request.user, new_state=state)
+    flow.permissions.can_create(request)
     obj = flow.process_new(request=request)
     return flow.response(obj=obj)
 
@@ -43,7 +43,7 @@ def view(request, flow, **kwargs):
     state = request.path.strip('/').split('/')[-1]
     new_state_id = flow.reversed_states[state]
     obj = get_object(flow, kwargs[flow.lookup_field])
-    flow.check_user_permissions(user=request.user, new_state=state)
+    flow.check_permissions(request=request, new_state=state)
     flow.validate_state_change(obj=obj, new_state=new_state_id)
     flow.process(obj=obj, new_state=state, request=request)
     setattr(obj, flow.field, new_state_id)
@@ -54,5 +54,6 @@ def view(request, flow, **kwargs):
 @require_http_methods(['GET'])
 @yoflow
 def history(request, flow, **kwargs):
+    flow.permissions.can_view_history(request)
     obj = get_object(flow, kwargs[flow.lookup_field])
     return flow.response_history(obj.yoflow_history.all())
