@@ -9,16 +9,16 @@ from yoflow import exceptions
 
 def test_init(example_parent_flow):
     assert example_parent_flow.reversed_states == {'draft': 1, 'approved': 2, 'final': 3}
-    assert example_parent_flow.field == Flow.DEFAULT_FIELD
+    assert example_parent_flow.state_field == Flow.DEFAULT_STATE_FIELD
     assert example_parent_flow.lookup_field == Flow.DEFAULT_LOOKUP_FIELD
     assert example_parent_flow.url_regex == Flow.DEFAULT_URL_REGEX
 
 
 def test_init_overrides(example_child_flow):
     assert example_child_flow.reversed_states == {'draft': 1, 'approved': 2, 'final': 3}
-    assert example_child_flow.field == 'custom_state_field'
+    assert example_child_flow.state_field == 'custom_state_field'
     assert example_child_flow.lookup_field == 'uuid'
-    assert example_child_flow.url_regex == '<str:uuid>'
+    assert example_child_flow.url_regex == '(?P<uuid>[0-9a-f-]+)'
 
 
 def test_basic_flow_urls(example_parent_flow):

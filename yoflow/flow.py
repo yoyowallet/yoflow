@@ -12,13 +12,13 @@ from yoflow.views import create, delete, history, update
 
 class Flow(object):
 
-    DEFAULT_FIELD = 'state'
+    DEFAULT_STATE_FIELD = 'state'
     DEFAULT_LOOKUP_FIELD = 'pk'
     DEFAULT_URL_REGEX = '(?P<pk>\d+)'
 
     def __init__(self):
         self.reversed_states = {v: k for k, v in self.states.items()}
-        self.field = self.field if hasattr(self, 'field') else self.DEFAULT_FIELD
+        self.state_field = self.state_field if hasattr(self, 'state_field') else self.DEFAULT_STATE_FIELD
         self.lookup_field = self.lookup_field if hasattr(self, 'lookup_field') else self.DEFAULT_LOOKUP_FIELD
         self.url_regex = self.url_regex if hasattr(self, 'url_regex') else self.DEFAULT_URL_REGEX
         self.permissions = self.permissions if hasattr(self, 'permissions') else Permissions
@@ -37,7 +37,7 @@ class Flow(object):
         return urlpatterns, 'yoflow', '{}:{}'.format(self.model._meta.app_label, str(self.model._meta))
 
     def validate_state_change(self, obj, new_state):
-        current_state = getattr(obj, self.field)
+        current_state = getattr(obj, self.state_field)
         if new_state not in self.transitions.get(current_state, []) and current_state != new_state:
             raise InvalidTransition('Invalid state change from {} to {}'.format(
                 self.states[current_state],
@@ -69,14 +69,14 @@ class Flow(object):
         if hasattr(obj, 'yoflow_history'):
             obj.yoflow_history.create(
                 previous_state=None,
-                new_state=getattr(obj, 'get_{}_display'.format(self.field))(),
+                new_state=getattr(obj, 'get_{}_display'.format(self.state_field))(),
                 meta=meta,
                 user=request.user if request.user.is_anonymous is not True else None,
             )
         return obj
 
     def process(self, obj, new_state, request, via_admin=False):
-        current_state = self.states[getattr(obj, self.field)]
+        current_state = self.states[getattr(obj, self.state_field)]
         meta = {}
         kwargs = {
             'new_state': new_state,

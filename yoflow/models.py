@@ -20,7 +20,6 @@ class Flow(models.Model):
 
 
 class FlowModel(models.Model):
-    yoflow_created = models.DateTimeField(auto_now_add=True)
     yoflow_history = GenericRelation(Flow)
 
     class Meta:

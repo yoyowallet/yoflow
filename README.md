@@ -46,9 +46,9 @@ from example import models
 class ExampleFlow(flow.Flow):
     model = models.Example
     states = dict(models.Example.STATES)
-    field = 'state'                         # default value
+    state_field = 'state'                   # default value
     lookup_field = 'pk'                     # default value
-    url_regex = '<int:pk>'                  # default value
+    url_regex = '(?P<pk>\d+)'               # default value
 
     transitions = {
         # draft can remain in draft state or move to approved

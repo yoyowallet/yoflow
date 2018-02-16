@@ -33,8 +33,8 @@ class ChildFlow(flow.Flow):
         models.APPROVED: [models.FINAL],
         models.FINAL: [],
     }
-    field = 'custom_state_field'
-    url_regex = '<str:uuid>'
+    state_field = 'custom_state_field'
+    url_regex = '(?P<uuid>[0-9a-f-]+)'
     lookup_field = 'uuid'
 
     def create(self, obj, json, **kwargs):

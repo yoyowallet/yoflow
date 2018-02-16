@@ -29,7 +29,7 @@ def yoflow(f):
 @transaction.atomic
 @yoflow
 def create(request, flow, **kwargs):
-    default = flow.model._meta.get_field(flow.field).get_default()
+    default = flow.model._meta.get_field(flow.state_field).get_default()
     state = flow.states[default]
     flow.permissions.can_create(request)
     obj = flow.process_new(request=request)
@@ -56,7 +56,7 @@ def update(request, flow, **kwargs):
     flow.check_permissions(request=request, new_state=state)
     flow.validate_state_change(obj=obj, new_state=new_state_id)
     flow.process(obj=obj, new_state=state, request=request)
-    setattr(obj, flow.field, new_state_id)
+    setattr(obj, flow.state_field, new_state_id)
     obj.save()
     return flow.response(obj=obj)
 
