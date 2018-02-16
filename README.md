@@ -58,7 +58,7 @@ class ExampleFlow(flow.Flow):
     }
 
     def create(self, obj, json, meta, request):
-        # if create is defined then you can POST new instances at the root URL
+        # called with POST request to root URL
         obj.name = json['name']
 
     def on_draft(self, new_state, obj, request, json, meta, via_admin):
