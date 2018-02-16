@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
-from django.urls import path
+from django.conf.urls import url
 
 from yoflow.exceptions import InvalidTransition, PermissionDenied
 from yoflow.permissions import Permissions
@@ -14,7 +14,7 @@ class Flow(object):
 
     DEFAULT_FIELD = 'state'
     DEFAULT_LOOKUP_FIELD = 'pk'
-    DEFAULT_URL_REGEX = '<int:pk>'
+    DEFAULT_URL_REGEX = '(?P<pk>\d+)'
 
     def __init__(self):
         self.reversed_states = {v: k for k, v in self.states.items()}
@@ -27,12 +27,12 @@ class Flow(object):
     def urls(self):
         states = dict(self.states).values()
         urlpatterns = [
-            path('{}/{}/'.format(self.url_regex, state), update, {'flow': self}, name=state) for state in states
+            url(r'{}/{}/$'.format(self.url_regex, state), update, {'flow': self}, name=state) for state in states
         ]
         urlpatterns += [
-            path('', create, {'flow': self}, name='create'),
-            path('{}/'.format(self.url_regex), delete, {'flow': self}, name='delete'),
-            path('{}/history/'.format(self.url_regex), history, {'flow': self}, name='history'),
+            url(r'^$', create, {'flow': self}, name='create'),
+            url(r'{}/$'.format(self.url_regex), delete, {'flow': self}, name='delete'),
+            url(r'{}/history/$'.format(self.url_regex), history, {'flow': self}, name='history'),
         ]
         return urlpatterns, 'yoflow', '{}:{}'.format(self.model._meta.app_label, str(self.model._meta))
 

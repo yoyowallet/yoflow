@@ -1,8 +1,8 @@
-from django.urls import path
+from django.conf.urls import url
 
 from example import flows
 
 urlpatterns = [
-    path('parent/', flows.ParentFlow().urls, name='parent'),
-    path('child/', flows.ChildFlow().urls, name='child'),
+    url(r'^parent/', flows.ParentFlow().urls, name='parent'),
+    url(r'^child/', flows.ChildFlow().urls, name='child'),
 ]

@@ -12,6 +12,14 @@ class ParentPermissions(permissions.Permissions):
         pass
 
     @staticmethod
+    def can_delete(request):
+        pass
+
+    @staticmethod
+    def can_view_history(request):
+        pass
+
+    @staticmethod
     def has_draft_permission(request):
         pass
 

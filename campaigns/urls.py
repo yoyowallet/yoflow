@@ -1,4 +1,4 @@
-from django.urls import path
+from django.conf.urls import url
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from campaigns import flows
@@ -11,6 +11,6 @@ def get(request, pk, **kwargs):
 
 
 urlpatterns = [
-    path('', flows.CampaignFlow().urls),
-    path('<int:pk>/', get),
+    url('', flows.CampaignFlow().urls),
+    url('<int:pk>/', get),
 ]

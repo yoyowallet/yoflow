@@ -13,7 +13,7 @@ Define all possible state transitions and state change behaviour for model insta
 ## Requirements
 
 * Python3
-* Django 2.0
+* Django 1.11
 * PostgreSQL ≥ 9.4
 
 ## Usage example
@@ -206,6 +206,4 @@ class ExampleAdmin(FlowAdmin):
 ```
 
 ### TODO
-* Django 1.11 support
 * Return JsonResponse when no matching URL (404)
-* Add support for DELETE operations
