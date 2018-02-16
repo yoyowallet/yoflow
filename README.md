@@ -4,7 +4,7 @@
 
 Define all possible state transitions and state change behaviour for model instances, automatically get:
 
-* REST endpoint for instance creation
+* REST endpoint for instance creation/deletion
 * REST endpoints for defined state transitions
 * REST endpoint to view instance state transition history
 * Optional user permission validation per state transition
@@ -112,6 +112,7 @@ For our possible models states this will provide:
 | `GET`       | `/example/<int:pk>/history`  | Fetch history of state changes         |
 | `POST`      | `/example/<int:pk>/draft`    | Update instance to draft state         |
 | `POST`      | `/example/<int:pk>/approved` | Update instance to approved state      |
+| `DELETE`    | `/example/<int:pk>/`         | Delete instance from database          | 
 
 #### Example
 

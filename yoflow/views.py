@@ -36,10 +36,20 @@ def create(request, flow, **kwargs):
     return flow.response(obj=obj)
 
 
+@require_http_methods(['DELETE'])
+@transaction.atomic
+@yoflow
+def delete(request, flow, **kwargs):
+    flow.permissions.can_delete(request)
+    obj = get_object(flow, kwargs[flow.lookup_field])
+    obj.delete()
+    return flow.response_delete()
+
+
 @require_http_methods(['POST'])
 @transaction.atomic
 @yoflow
-def view(request, flow, **kwargs):
+def update(request, flow, **kwargs):
     state = request.path.strip('/').split('/')[-1]
     new_state_id = flow.reversed_states[state]
     obj = get_object(flow, kwargs[flow.lookup_field])

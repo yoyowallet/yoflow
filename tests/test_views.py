@@ -38,7 +38,7 @@ def test_object_not_found(user, rf, example_parent_flow):
     request = rf.post('/example/parent/1/draft/')
     request.user = user
     with pytest.raises(exceptions.FlowException):
-        response = views.view(request, example_parent_flow, pk=1)
+        response = views.update(request, example_parent_flow, pk=1)
 
 
 def test_object_not_found_response(user_client, example_parent_flow):
@@ -55,7 +55,7 @@ def test_invalid_state_change_raises_exception(rf, admin_user, example_parent_fl
     request = rf.post('/example/parent/1/final/')
     request.user = admin_user
     with pytest.raises(exceptions.InvalidTransition):
-        response = views.view(request, example_parent_flow, pk=parent.pk)
+        response = views.update(request, example_parent_flow, pk=parent.pk)
 
 
 def test_invalid_state_change_raises_exception_response(admin_client, example_parent_flow, parent):

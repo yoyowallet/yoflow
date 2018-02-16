@@ -7,7 +7,7 @@ from django.urls import path
 
 from yoflow.exceptions import InvalidTransition, PermissionDenied
 from yoflow.permissions import Permissions
-from yoflow.views import create, history, view
+from yoflow.views import create, delete, history, update
 
 
 class Flow(object):
@@ -21,22 +21,19 @@ class Flow(object):
         self.field = self.field if hasattr(self, 'field') else self.DEFAULT_FIELD
         self.lookup_field = self.lookup_field if hasattr(self, 'lookup_field') else self.DEFAULT_LOOKUP_FIELD
         self.url_regex = self.url_regex if hasattr(self, 'url_regex') else self.DEFAULT_URL_REGEX
-        self.create_endpoint = True if hasattr(self, 'create') else False
         self.permissions = self.permissions if hasattr(self, 'permissions') else Permissions
 
     @property
     def urls(self):
         states = dict(self.states).values()
         urlpatterns = [
-            path('{}/history/'.format(self.url_regex), history, {'flow': self}, name='history'),
+            path('{}/{}/'.format(self.url_regex, state), update, {'flow': self}, name=state) for state in states
         ]
         urlpatterns += [
-            path('{}/{}/'.format(self.url_regex, state), view, {'flow': self}, name=state) for state in states
+            path('', create, {'flow': self}, name='create'),
+            path('{}/'.format(self.url_regex), delete, {'flow': self}, name='delete'),
+            path('{}/history/'.format(self.url_regex), history, {'flow': self}, name='history'),
         ]
-        if self.create_endpoint:
-            urlpatterns += [
-                path('', create, {'flow': self}, name='create'),
-            ]
         return urlpatterns, 'yoflow', '{}:{}'.format(self.model._meta.app_label, str(self.model._meta))
 
     def validate_state_change(self, obj, new_state):
@@ -102,6 +99,9 @@ class Flow(object):
 
     def response(self, obj):
         return JsonResponse({})
+
+    def response_delete(self):
+        return JsonResponse({}, status=204)
 
     def response_history(self, queryset):
         return JsonResponse(

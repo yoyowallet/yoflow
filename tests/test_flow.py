@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 
 from yoflow.flow import Flow
-from yoflow import exceptions, views
+from yoflow import exceptions
 
 
 def test_init(example_parent_flow):
