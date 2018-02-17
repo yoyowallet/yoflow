@@ -10,8 +10,8 @@ from django.utils.encoding import python_2_unicode_compatible
 class Flow(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    previous_state = models.CharField(max_length=settings.YOFLOW_STATE_MAX_LENGTH or 256, null=True)
-    new_state = models.CharField(max_length=settings.YOFLOW_STATE_MAX_LENGTH or 256)
+    previous_state = models.CharField(max_length=getattr(settings, 'YOFLOW_STATE_MAX_LENGTH', 256), null=True)
+    new_state = models.CharField(max_length=getattr(settings, 'YOFLOW_STATE_MAX_LENGTH', 256))
     meta = JSONField(null=True, blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.CharField(max_length=settings.YOFLOW_OBJECT_ID_MAX_LENGTH or 256)
