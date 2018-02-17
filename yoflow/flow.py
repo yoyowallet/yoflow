@@ -57,6 +57,12 @@ class Flow(object):
     def all(self, meta, **kwargs):
         pass
 
+    @staticmethod
+    def _get_user(request):
+        user = request.user
+        is_anonymous = user.is_anonymous if isinstance(user.is_anonymous, bool) else user.is_anonymous()
+        return None if is_anonymous else user
+
     def process_new(self, request, obj=None):
         """
         Create new instance of flow model - not supported via admin
@@ -71,7 +77,7 @@ class Flow(object):
                 previous_state=None,
                 new_state=getattr(obj, 'get_{}_display'.format(self.state_field))(),
                 meta=meta,
-                user=request.user if request.user.is_anonymous() is not True else None,
+                user=self._get_user(request)
             )
         return obj
 
@@ -94,7 +100,7 @@ class Flow(object):
                 previous_state=current_state,
                 new_state=new_state,
                 meta=meta,
-                user=request.user if request.user.is_anonymous() is not True else None,
+                user=self._get_user(request),
             )
 
     def response(self, obj):

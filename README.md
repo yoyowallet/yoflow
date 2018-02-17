@@ -12,7 +12,7 @@ Define all possible state transitions and state change behaviour for model insta
 ## Requirements
 
 * Python3
-* Django 1.11
+* Django ≥ 1.11
 * PostgreSQL ≥ 9.4 (JSON required)
 
 ## Example
