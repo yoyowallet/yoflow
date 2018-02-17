@@ -154,19 +154,19 @@ For our possible model states this will provide:
 
 ```sh
 # create new instance
-$ http POST localhost:9000/blog/ name='test' content='abc'
+$ http POST localhost:8000/blog/ name='test' content='abc'
 {"name": "test", "state": "draft"}
 
 # update instance name and remain in default draft state
-$ http POST localhost:9000/blog/1/draft/ name='updated'
+$ http POST localhost:8000/blog/1/draft/ name='updated'
 {"name": "updated", "state": "draft"}
 
 # update instance state to approved with meta data
-$ http POST localhost:9000/blog/1/approved/ message='Approved!'
+$ http POST localhost:8000/blog/1/approved/ message='Approved!'
 {"name": "updated", "state": "approved"}
 
 # view history
-$ http GET localhost:9000/blog/1/history/
+$ http GET localhost:8000/blog/1/history/
 [
     {
         "created_at": "2018-01-29T16:00:00.000Z",
@@ -208,7 +208,7 @@ class BlogAdmin(FlowAdmin):
 If enabled, `YoflowMiddleware` will catch `yoflow.exception` instances and return a JSON payload.
 
 ```sh
-$ http POST localhost:9000/blog/1/draft/
+$ http POST localhost:8000/blog/1/draft/
 {
     "success": False,
     "message": "Invalid state change from approved to draft"
