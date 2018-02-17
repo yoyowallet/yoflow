@@ -25,7 +25,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=[
-        'Django>=1.8'
+        'Django>=1.10'
     ],
     packages=[
         'yoflow'
