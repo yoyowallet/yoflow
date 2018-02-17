@@ -201,7 +201,7 @@ class ExampleAdmin(FlowAdmin):
 
 If enabled, `YoflowMiddleware` will catch `yoflow.exception` instances and return a JSON payload.
 
-```
+```sh
 $ http POST localhost:9000/blog/1/draft/
 {
     "success": False,

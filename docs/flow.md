@@ -25,7 +25,7 @@ Called via state transition endpoints
 
 * * *
 
-### `response_delete(**kwargs)`
+### `response_delete()`
 
 Called via DELETE `/app/model/<id>/`
 
@@ -49,8 +49,8 @@ Useful for executing custom logic when an instance transitions for the first tim
 
 **Parameters:**
 
-* current_state -- string
-* meta -- dictionary
+* current_state -- (optional) string
+* meta -- (optional) dictionary
 * obj -- (optional) model instance
 * request -- (optional) web request
 * json -- (optional) parsed json data from POST body
@@ -68,7 +68,7 @@ This will be called even when the current state does not change - if you want fi
 
 **Parameters:**
 
-* meta -- dictionary
+* meta -- (optional) dictionary
 * obj -- (optional) model instance
 * request -- (optional) web request
 * json -- (optional) parsed json data from POST body
@@ -87,7 +87,7 @@ Note. there is no authentication hook for this - it will be called on **all** st
 
 **Parameters:**
 
-* meta -- dictionary
+* meta -- (optional) dictionary
 * obj -- (optional) model instance
 * request -- (optional) web request
 * json -- (optional) parsed json data from POST body
