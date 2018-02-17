@@ -9,7 +9,7 @@ Define all possible state transitions and state change behaviour for model insta
 * Configurable user validation for all endpoints
 * Django admin integration
 
-Example & Documentation: www.yoyowallet.github.io/yoflow
+Example & Documentation: https://yoyowallet.github.io/yoflow/
 
 ## Requirements
 
