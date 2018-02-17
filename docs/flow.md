@@ -4,7 +4,7 @@ You can override any of the following workflow functions to customise functional
 
 ### `create(**kwargs)`
 
-#### Called via POST `/app/model/`
+Called via POST `/app/model/`
 
 Parameters:
 
@@ -49,14 +49,14 @@ Useful for executing custom logic when an instance transitions for the first tim
 
 Parameters:
 
+* current_state -- string
+* meta -- dictionary
 * obj -- (optional) model instance
-* meta -- (optional) dictionary
 * request -- (optional) web request
 * json -- (optional) parsed json data from POST body
 * new_state -- (optional) string
 * state_changed -- (optional) current_state != new_state
 * via_admin -- (optional) bool
-* current_state -- (optional) string
 
 * * *
 
@@ -68,8 +68,8 @@ This will be called even when the current state does not change - if you want fi
 
 Parameters:
 
+* meta -- dictionary
 * obj -- (optional) model instance
-* meta -- (optional) dictionary
 * request -- (optional) web request
 * json -- (optional) parsed json data from POST body
 * new_state -- (optional) string
@@ -87,8 +87,8 @@ Note. there is no authentication hook for this - it will be called on **all** st
 
 Parameters:
 
+* meta -- dictionary
 * obj -- (optional) model instance
-* meta -- (optional) dictionary
 * request -- (optional) web request
 * json -- (optional) parsed json data from POST body
 * new_state -- (optional) string
