@@ -11,7 +11,7 @@ setup(
     description='Django workflows',
     long_description=open('README.md').read(),
     platforms=['Any'],
-    keywords=['workflow', 'django'],
+    keywords=['workflow', 'django', 'yoflow'],
     url='http://github.com/yoyowallet/yoflow',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -25,7 +25,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=[
-        'Django>=1.11'
+        'Django>=1.8'
     ],
     packages=[
         'yoflow'

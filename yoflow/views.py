@@ -18,7 +18,8 @@ def yoflow(f):
     """
     def wrapper(request, flow, *args, **kwargs):
         try:
-            flow.permissions.authenticate(request)
+            if not flow.permissions.authenticate(request):
+                raise exceptions.PermissionDenied('User not authenticated')
             return f(request, flow, *args, **kwargs)
         except Exception as e:
             raise e if isinstance(e, exceptions.FlowException) else exceptions.FlowException
@@ -31,7 +32,8 @@ def yoflow(f):
 def create(request, flow, **kwargs):
     default = flow.model._meta.get_field(flow.state_field).get_default()
     state = flow.states[default]
-    flow.permissions.can_create(request)
+    if not flow.permissions.can_create(request):
+        raise PermissionDenied('You do not have permission to create new instances')
     obj = flow.process_new(request=request)
     return flow.response(obj=obj)
 
@@ -40,7 +42,8 @@ def create(request, flow, **kwargs):
 @transaction.atomic
 @yoflow
 def delete(request, flow, **kwargs):
-    flow.permissions.can_delete(request)
+    if not flow.permissions.can_delete(request):
+        raise PermissionDenied('You do not have permission to delete instances')
     obj = get_object(flow, kwargs[flow.lookup_field])
     obj.delete()
     return flow.response_delete()
@@ -64,6 +67,7 @@ def update(request, flow, **kwargs):
 @require_http_methods(['GET'])
 @yoflow
 def history(request, flow, **kwargs):
-    flow.permissions.can_view_history(request)
+    if not flow.permissions.can_view_history(request):
+        raise PermissionDenied('You do not have permission to view instance history')
     obj = get_object(flow, kwargs[flow.lookup_field])
     return flow.response_history(obj.yoflow_history.all())

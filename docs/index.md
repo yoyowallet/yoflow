@@ -31,7 +31,7 @@ class Blog(FlowModel):
 
 ### Permissions
 
-yoflow provides authentication hooks for all views and state changes. By default all endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute permission checking - **this is not recommended** - instead you should access the request object and raise an exception to prevent further changes - as shown in `can_delete`.
+yoflow provides authentication hooks for all views and state changes. By default all endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute permission checking - **this is not recommended** - instead you should access the request object and either return a boolean value or raise an exception to prevent further changes - as shown in `can_delete`.
 
 ```python
 # blog/permissions.py
@@ -41,28 +41,27 @@ class BlogPermissions(permissions.Permissions):
 
     @staticmethod
     def authenticate(request):
-        pass
+        return True
 
     @staticmethod
     def can_create(request):
-        pass
+        return True
 
     @staticmethod
     def can_delete(request):
-        if not request.user.is_staff:
-            raise exception.PermissionDenied('You shall not pass')
+        return request.user.is_staff
 
     @staticmethod
     def can_view_history(request):
-        pass
+        return True
 
     @staticmethod
     def has_draft_permission(request):
-        pass
+        return True
 
     @staticmethod
     def has_approved_permission(request):
-        pass
+        return True
 ```
 
 More authentication information available [here](authentication).
