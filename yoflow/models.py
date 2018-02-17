@@ -14,7 +14,7 @@ class Flow(models.Model):
     new_state = models.CharField(max_length=getattr(settings, 'YOFLOW_STATE_MAX_LENGTH', 256))
     meta = JSONField(null=True, blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.CharField(max_length=settings.YOFLOW_OBJECT_ID_MAX_LENGTH or 256)
+    object_id = models.CharField(max_length=getattr(settings, 'YOFLOW_OBJECT_ID_MAX_LENGTH', 256))
     content_object = GenericForeignKey()
 
     def __str__(self):
