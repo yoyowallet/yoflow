@@ -31,11 +31,11 @@ class Blog(FlowModel):
 
 ### Permissions
 
-yoflow provides authentication hooks for all views and state changes. By default all endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute all permission checking - **this is not recommended** - instead you should access the request object and raise an exception to prevent further changes.
+yoflow provides authentication hooks for all views and state changes. By default all endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute permission checking - **this is not recommended** - instead you should access the request object and raise an exception to prevent further changes - as shown in `can_delete`.
 
 ```python
 # blog/permissions.py
-from yoflow import permissions
+from yoflow import exceptions, permissions
 
 class BlogPermissions(permissions.Permissions):
 
@@ -49,7 +49,8 @@ class BlogPermissions(permissions.Permissions):
 
     @staticmethod
     def can_delete(request):
-        pass
+        if not request.user.is_staff:
+            raise exception.PermissionDenied('You shall not pass')
 
     @staticmethod
     def can_view_history(request):
@@ -68,13 +69,15 @@ More authentication information available [here](authentication).
 
 ### Workflow
 
-We want to be able to:
+We need to:
 
-* Create new draft blog posts
+* Create new blog posts in draft state
 * Update draft blog posts
 * Approve draft blog posts to approved with an optional message
 
-We will create a flow class and extend `yoflow.flow.Flow`, we need to define our model, all possible states, our permissions, and all possible state transitions. Note. transitions allow the state of the instance to remain in the same state - in our example draft blog posts can remain as draft or be moved to approved.
+We will create a flow class and extend `yoflow.flow.Flow`. We need to define our blog model, blog states, our custom permissions, and all possible blog state transitions.
+
+> Note. transitions allow the state of the instance to remain in the same state - in our example draft blog posts can remain as draft or be moved to approved.
 
 We override `create` & `on_draft` to take `name` and `content` from the POST request and save this to our blog post.
 

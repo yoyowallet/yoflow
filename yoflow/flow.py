@@ -70,7 +70,8 @@ class Flow(object):
         meta = {}
         obj = self.model()
         data = json.loads(request.body) if request.body else None
-        self.create(obj=obj, meta=meta, request=request, json=data)
+        if hasattr(self, 'create'):
+            self.create(obj=obj, meta=meta, request=request, json=data)
         obj.save()
         if hasattr(obj, 'yoflow_history'):
             obj.yoflow_history.create(
