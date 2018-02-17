@@ -1,16 +1,15 @@
+Imagine we want to publish blog posts on a website but need to manage the status of individual posts. Each blog post can be in one of two states; draft or approved. We want to create and modify blog posts via a REST interface which will be called from a web application.
 
-There are four main steps to create a workflow:
+Using yoflow there are four main steps to create a workflow:
 
-1. Create Django model
+1. Create a Django model
 2. Define workflow permissions
-3. Write custom workflow transition logic
+3. Create a workflow
 4. Integrate workflow URLs into project
-
-Imagine we want to publish blog posts on a website but need to manage the status of individual posts. Each blog post can be in one of two states; draft or approved. We want to create and modify blog post instances via a REST interface which will be called via a web application.
 
 ### Model
 
-We will create a `Blog` model in `models.py` which has a name, content, and a state field. We can optionally extend `FlowModel` - this will automatically take care of tracking state transitions so we can maintain an audit trail.
+We will create a `Blog` model in `models.py` which has a name, content, and a state field. All potential states should be defined using choices - something Django developers should be familiar with. We can optionally extend `FlowModel` - this will automatically take care of tracking state transitions so we can maintain an audit trail.
 
 ```python
 # blog/models.py
@@ -31,7 +30,7 @@ class Blog(FlowModel):
 
 ### Permissions
 
-yoflow provides authentication hooks for all views and state changes. By default all endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute permission checking - **this is not recommended** - instead you should access the request object and either return a boolean value or raise an exception to prevent further changes - as shown in `can_delete`.
+yoflow provides authentication hooks for all views and state changes. By default all endpoints will raise `yoflow.exceptions.PermissionDenied`, in this example we will mute permission checking - **this is not recommended**. You should use the request object and either return a boolean value or raise an exception to prevent further changes; example shown in `can_delete` below.
 
 ```python
 # blog/permissions.py
@@ -49,6 +48,7 @@ class BlogPermissions(permissions.Permissions):
 
     @staticmethod
     def can_delete(request):
+        # prevent deletion for all non-staff users
         return request.user.is_staff
 
     @staticmethod
@@ -64,19 +64,19 @@ class BlogPermissions(permissions.Permissions):
         return True
 ```
 
-More authentication information available [here](authentication).
+More information about authentication hooks can be found [here](authentication).
 
 ### Workflow
 
-We want to:
+In our simple workflow we want to:
 
-* Create new blog posts in draft state
+* Create new blog posts
 * Update draft blog posts
-* Approve draft blog posts to approved with an optional message
+* Transition draft blog posts to approved with an optional approval message
 
-We will create a flow class and extend `yoflow.flow.Flow`. We need to define our blog model, blog states, our custom permissions, and all possible blog state transitions.
+We will create a workflow class extending `yoflow.flow.Flow`. We must define our model, states, permissions, and all possible state transitions.
 
-**Note. transitions allow the state of the instance to remain in the same state - in our example, draft blog posts can remain as draft or be moved to approved.**
+**Note. state transitions allow the state of the instance to remain in the same state - in our example, draft blog posts can remain as draft or be moved to approved.**
 
 We override `create` & `on_draft` to take `name` and `content` from the POST request and save this to our blog post.
 
@@ -115,11 +115,11 @@ class BlogFlow(flow.Flow):
         return JsonResponse({'name': obj.name, 'state': obj.get_state_display()})
 ```
 
-More flow information available [here](flow).
+More workflow information is available [here](flow).
 
 ### URLs
 
-Finally, expose workflow URLs by including them in our `urls.py`.
+Finally, we will generate and expose our REST interface by including urls in our `urls.py`.
 
 ```python
 # blog/urls.py

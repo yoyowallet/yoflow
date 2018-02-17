@@ -65,11 +65,13 @@ class Flow(object):
         """
         Create new instance of flow model - not supported via admin
         """
+        if not hasattr(self, 'create'):
+            raise PermissionDenied('Unable to create new {}'.format(self.model._meta))  # TODO test model name with py27
+
         meta = {}
         obj = self.model()
         data = json.loads(request.body) if request.body else None
-        if hasattr(self, 'create'):
-            self.create(obj=obj, meta=meta, request=request, json=data)
+        self.create(obj=obj, meta=meta, request=request, json=data)
         obj.save()
         if hasattr(obj, 'yoflow_history'):
             obj.yoflow_history.create(

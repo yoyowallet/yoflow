@@ -13,7 +13,7 @@ Documentation & Example Worflow: https://yoyowallet.github.io/yoflow/
 
 ## Requirements
 
-* Django ≥ 1.8
+* Django ≥ 1.10
 * PostgreSQL ≥ 9.4 (JSON support required)
 
 ## Running Example

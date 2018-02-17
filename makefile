@@ -1,10 +1,12 @@
 build: clean virtualenv database
 
 clean:
-	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
-	find . -path "*/migrations/*.pyc" -delete
 	find . -type f -name "*.pyc" -delete
 	find . -type f -name "*,cover" -delete
+
+clean_migrations:
+	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+	find . -path "*/migrations/*.pyc" -delete
 
 virtualenv:
 	pip install -r requirements.txt
@@ -26,4 +28,4 @@ xenon:
 test: static_analysis
 	tox $(pytest_args)
 
-.PHONY: clean virtualenv database static_analysis pep8 xenon test
+.PHONY: clean clean_migrations virtualenv database static_analysis pep8 xenon test
