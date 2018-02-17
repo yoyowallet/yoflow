@@ -17,7 +17,8 @@ class ParentFlow(flow.Flow):
         models.FINAL: [],
     }
 
-    def create(self, obj, json, **kwargs):
+    @staticmethod
+    def create(obj, json, **kwargs):
         obj.name = json['name']
 
 
@@ -37,17 +38,21 @@ class ChildFlow(flow.Flow):
     url_regex = '(?P<uuid>[0-9a-f-]+)'
     lookup_field = 'uuid'
 
-    def create(self, obj, json, **kwargs):
+    @staticmethod
+    def create(obj, json, **kwargs):
         obj.parent_id = json['parent']
 
-    def draft_to_approved(self, new_state, obj, request, meta, via_admin):
+    @staticmethod
+    def draft_to_approved(new_state, obj, request, meta, via_admin):
         return {'comment': 'I am approving this!'}
 
-    def on_approved(self, new_state, obj, request, meta, via_admin):
+    @staticmethod
+    def on_approved(new_state, obj, request, meta, via_admin):
         if obj.parent.state != models.APPROVED:
             # check that parent is approved otherwise raise error
             raise ValidationError('Unable to approve because parent is not approved - approve parent first.')
 
-    def response(self, obj):
+    @staticmethod
+    def response(obj):
         serializer = serializers.ChildSerializer(obj)
         return JsonResponse(serializer.data)

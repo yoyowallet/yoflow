@@ -100,19 +100,26 @@ class BlogFlow(flow.Flow):
         model.APPROVED: [],
     }
 
-    def create(self, obj, json, **kwargs):
+    @staticmethod
+    def create(obj, json, **kwargs):
         obj.name = json['name']
         obj.content = json['content']
 
-    def on_draft(self, obj, json, **kwargs):
+    @staticmethod
+    def on_draft(obj, json, **kwargs):
         obj.name = json.get('name', obj.name)
         obj.content = json.get('content', obj.content)
 
-    def on_approved(self, json, meta, **kwargs):
+    @staticmethod
+    def on_approved(json, meta, **kwargs):
         meta['message'] = json.get('message', None)
 
-    def response(self, obj):
-        return JsonResponse({'name': obj.name, 'state': obj.get_state_display()})
+    @staticmethod
+    def response(obj):
+        return JsonResponse({
+            'name': obj.name,
+            'state': obj.get_state_display(),
+        })
 ```
 
 More workflow information is available [here](flow).
@@ -155,7 +162,7 @@ $ http POST localhost:9000/blog/1/draft/ name='updated'
 {'name': 'updated', 'state': 'draft'}
 
 # update instance state to approved with meta data
-$ http POST localhost:9000/blog/1/approved/ message='This is now approved!'
+$ http POST localhost:9000/blog/1/approved/ message='Approved!'
 {'name': 'updated', 'state': 'approved'}
 
 # view history
@@ -164,7 +171,7 @@ $ http GET localhost:9000/blog/1/history/
     {
         "created_at": "2018-01-29T16:00:00.000Z",
         "meta": {
-            "message": "This is now approved!"
+            "message": "Approved!"
         },
         "new_state": "approved",
         "previous_state": "draft",
