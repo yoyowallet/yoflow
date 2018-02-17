@@ -155,15 +155,15 @@ For our possible model states this will provide:
 ```sh
 # create new instance
 $ http POST localhost:9000/blog/ name='test' content='abc'
-{'name': 'test', 'state': 'draft'}
+{"name": "test", "state": "draft"}
 
 # update instance name and remain in default draft state
 $ http POST localhost:9000/blog/1/draft/ name='updated'
-{'name': 'updated', 'state': 'draft'}
+{"name": "updated", "state": "draft"}
 
 # update instance state to approved with meta data
 $ http POST localhost:9000/blog/1/approved/ message='Approved!'
-{'name': 'updated', 'state': 'approved'}
+{"name": "updated", "state": "approved"}
 
 # view history
 $ http GET localhost:9000/blog/1/history/

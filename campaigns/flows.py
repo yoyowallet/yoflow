@@ -14,33 +14,39 @@ class CampaignFlow(flow.Flow):
     }
     KEY_COMMENT = 'comment'
 
-    def update(self, obj, json, request):
+    @staticmethod
+    def update(obj, json, request):
         obj.json = json
         obj.name = json['setup']['name']['value']
         obj.start = json['setup']['start']['value']
         obj.end = json['setup']['end']['value']
         obj.retailer = int(json['retailer'])
         obj.type = int(json['type'])
-        obj.owner = request.user if request.user.is_anonymous is not True else None         # TODO make this required
+        obj.owner = request.user if request.user.is_anonymous is not True else None  # TODO make this required
 
-    def create(self, obj, json, request, **kwargs):
+    @staticmethod
+    def create(obj, json, request, **kwargs):
         self.update(obj=obj, json=json, request=request)
 
-    def on_draft(self, request, obj, json, **kwargs):
+    @staticmethod
+    def on_draft(request, obj, json, **kwargs):
         self.update(obj=obj, json=json, request=request)
 
-    def on_pending(self, obj, state_changed, **kwargs):
+    @staticmethod
+    def on_pending(obj, state_changed, **kwargs):
         if state_changed:
             utils.send_pending_email(campaign=obj)
 
-    def on_rejected(self, json, meta, state_changed, **kwargs):
+    @staticmethod
+    def on_rejected(json, meta, state_changed, **kwargs):
         if state_changed:
             comment = json[self.KEY_COMMENT] if json else None
             if comment:
                 meta[self.KEY_COMMENT] = json[self.KEY_COMMENT]
             utils.send_rejection_email(campaign=obj, comment=comment)
 
-    def on_approved(self, obj, meta, json, state_changed, **kwargs):
+    @staticmethod
+    def on_approved(obj, meta, json, state_changed, **kwargs):
         if state_changed:
             comment = json[self.KEY_COMMENT] if json else None
             if comment:
@@ -48,6 +54,7 @@ class CampaignFlow(flow.Flow):
             utils.create_campaign(campaign=obj)
             utils.send_approval_email(campaign=obj, comment=comment)
 
-    def on_deleted(self, obj, **kwargs):
+    @staticmethod
+    def on_deleted(obj, **kwargs):
         utils.cancel_campaign(campaign=obj)
         utils.send_deleted_email(campaign=obj)
