@@ -76,7 +76,7 @@ We want to:
 
 We will create a flow class and extend `yoflow.flow.Flow`. We need to define our blog model, blog states, our custom permissions, and all possible blog state transitions.
 
-**Note. transitions allow the state of the instance to remain in the same state - in our example draft blog posts can remain as draft or be moved to approved.**
+**Note. transitions allow the state of the instance to remain in the same state - in our example, draft blog posts can remain as draft or be moved to approved.**
 
 We override `create` & `on_draft` to take `name` and `content` from the POST request and save this to our blog post.
 
@@ -185,15 +185,15 @@ $ http GET localhost:9000/blog/1/history/
 Support for admin via `FlowAdmin` - limits available state choices based on transitions and shows inline historical state changes:
 
 ```python
-# example/admin.py
+# blog/admin.py
 from django.contrib import admin
-from example import models, flows, forms
+from blog import models, flows, forms
 from yoflow.admin import FlowAdmin
 
-@admin.register(models.Example)
-class ExampleAdmin(FlowAdmin):
-    flow = flows.ExampleFlow
-    form = forms.ExampleForm
+@admin.register(models.Blog)
+class BlogAdmin(FlowAdmin):
+    flow = flows.BlogFlow
+    form = forms.BlogForm
 ```
 
 ## Middleware
