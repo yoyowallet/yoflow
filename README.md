@@ -20,17 +20,14 @@ Example & Documentation: https://yoyowallet.github.io/yoflow/
 
 ```sh
 mkvirtualenv yoflow
-make virtualenv
-createdb yoflow
-./manage migrate
+make
 ./manage runserver
 ```
 
 ## Running Tests
 
 ```sh
-pip install tox
-tox
+make test
 ```
 
 ### TODO

@@ -37,6 +37,7 @@ class FlowInline(GenericTabularInline):
     def has_add_permission(self, request):
         return False
 
+
 class FlowAdmin(admin.ModelAdmin):
 
     form = forms.FlowForm

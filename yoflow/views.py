@@ -30,10 +30,8 @@ def yoflow(f):
 @transaction.atomic
 @yoflow
 def create(request, flow, **kwargs):
-    default = flow.model._meta.get_field(flow.state_field).get_default()
-    state = flow.states[default]
     if not flow.permissions.can_create(request):
-        raise PermissionDenied('You do not have permission to create new instances')
+        raise exceptions.PermissionDenied('You do not have permission to create new instances')
     obj = flow.process_new(request=request)
     return flow.response(obj=obj)
 
@@ -43,7 +41,7 @@ def create(request, flow, **kwargs):
 @yoflow
 def delete(request, flow, **kwargs):
     if not flow.permissions.can_delete(request):
-        raise PermissionDenied('You do not have permission to delete instances')
+        raise exceptions.PermissionDenied('You do not have permission to delete instances')
     obj = get_object(flow, kwargs[flow.lookup_field])
     obj.delete()
     return flow.response_delete()
@@ -68,6 +66,6 @@ def update(request, flow, **kwargs):
 @yoflow
 def history(request, flow, **kwargs):
     if not flow.permissions.can_view_history(request):
-        raise PermissionDenied('You do not have permission to view instance history')
+        raise exceptions.PermissionDenied('You do not have permission to view instance history')
     obj = get_object(flow, kwargs[flow.lookup_field])
     return flow.response_history(obj.yoflow_history.all())
