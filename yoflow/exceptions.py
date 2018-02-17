@@ -2,7 +2,7 @@
 class FlowException(Exception):
 
     def __init__(self, message='Server Error', status_code=500):
-        super().__init__(message)
+        super(FlowException, self).__init__(message)
         self.status_code = getattr(self, 'status_code', status_code)
 
     def to_dict(self):

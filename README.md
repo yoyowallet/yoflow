@@ -13,8 +13,7 @@ Example & Documentation: https://yoyowallet.github.io/yoflow/
 
 ## Requirements
 
-* Python3
-* Django ≥ 1.11
+* Django ≥ 1.8
 * PostgreSQL ≥ 9.4 (JSON required)
 
 ## Running Example
@@ -30,8 +29,7 @@ createdb yoflow
 ## Running Tests
 
 ```sh
-mkvirtualenv yoflow
-make virtualenv
+pip install tox
 tox
 ```
 
