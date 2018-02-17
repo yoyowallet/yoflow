@@ -69,7 +69,7 @@ More authentication information available [here](authentication).
 
 ### Workflow
 
-We need to:
+We want to:
 
 * Create new blog posts in draft state
 * Update draft blog posts
@@ -163,7 +163,7 @@ $ http POST localhost:9000/blog/1/approved/ message='This is now approved!'
 $ http GET localhost:9000/blog/1/history/
 [
     {
-        "created_at": "2018-01-29T16:21:59.829Z",
+        "created_at": "2018-01-29T16:00:00.000Z",
         "meta": {
             "message": "This is now approved!"
         },
@@ -172,7 +172,7 @@ $ http GET localhost:9000/blog/1/history/
         "user": null
     },
     {
-        "created_at": "2018-01-29T16:21:57.794Z",
+        "created_at": "2018-01-29T15:00:00.000Z",
         "meta": null,
         "new_state": "draft",
         "previous_state": null,
@@ -181,16 +181,7 @@ $ http GET localhost:9000/blog/1/history/
 ]
 ```
 
-Similarly to overriding the response format with `response`, you can override the history response format by implementing `response_history` in your flow:
-
-```python
-class FormatHistoryFlow(flow.Flow):
-    def response_history(self, queryset):
-        # only serialize username and meta data
-        return JSONResponse(list(queryset.values('user__username', 'meta')), safe=False)
-```
-
-### Admin Integration
+## Admin Integration
 
 Support for admin via `FlowAdmin` - limits available state choices based on transitions and shows inline historical state changes:
 
@@ -206,12 +197,24 @@ class ExampleAdmin(FlowAdmin):
     form = forms.ExampleForm
 ```
 
-### Settings
+## Middleware
 
-##### `YOFLOW_STATE_MAX_LENGTH` (default=256)
+If enabled, `YoflowMiddleware` will catch `yoflow.exception` instances and return a JSON payload.
 
-Max length of `CharField` used to store value of before/after state transition.
+```
+$ http POST localhost:9000/blog/1/draft/
+{
+    "success": False,
+    "message": "Invalid state change from approved to draft"
+}
+```
 
-##### `YOFLOW_OBJECT_ID_MAX_LENGTH` (default=256)
+## Settings
 
-Max length of `CharField` used to store object pk. Usually this will be an integer primary key but in some cases you might wish to use uuid or something else.
+##### `YOFLOW_STATE_MAX_LENGTH`
+
+Max length of `CharField` used to store value of before/after state transition. *Default 256*
+
+##### `YOFLOW_OBJECT_ID_MAX_LENGTH`
+
+Max length of `CharField` used to store object pk. Usually this will be an integer primary key but in some cases you might wish to use uuid or something else. *Default 256*
