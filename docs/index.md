@@ -77,7 +77,7 @@ We need to:
 
 We will create a flow class and extend `yoflow.flow.Flow`. We need to define our blog model, blog states, our custom permissions, and all possible blog state transitions.
 
-> Note. transitions allow the state of the instance to remain in the same state - in our example draft blog posts can remain as draft or be moved to approved.
+**Note. transitions allow the state of the instance to remain in the same state - in our example draft blog posts can remain as draft or be moved to approved.**
 
 We override `create` & `on_draft` to take `name` and `content` from the POST request and save this to our blog post.
 

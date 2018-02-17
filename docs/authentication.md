@@ -6,7 +6,7 @@ You can override the following authentication/permission checks:
 
 Initial test on all requests
 
-Parameters:
+**Parameters:**
 
 * request -- web request
 
@@ -18,7 +18,7 @@ Default value checks that user is authenticated via `request.user.is_authenticat
 
 Subsequent check on create endpoint only
 
-Parameters:
+**Parameters:**
 
 * request -- web request
 
@@ -30,7 +30,7 @@ By default raises `yoflow.exceptions.PermissionDenied`.
 
 Subsequent check on delete endpoint only
 
-Parameters:
+**Parameters:**
 
 * request -- web request
 
@@ -42,7 +42,7 @@ By default raises `yoflow.exceptions.PermissionDenied`.
 
 Subsequent check on history endpoint only
 
-Parameters:
+**Parameters:**
 
 * request -- web request
 
@@ -54,7 +54,7 @@ By default raises `yoflow.exceptions.PermissionDenied`.
 
 Subsequent test on individual transitions
 
-Parameters:
+**Parameters:**
 
 * request -- web request
 

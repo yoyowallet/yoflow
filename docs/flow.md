@@ -6,7 +6,7 @@ You can override any of the following workflow functions to customise functional
 
 Called via POST `/app/model/`
 
-Parameters:
+**Parameters:**
 
 * obj -- (optional) model instance
 * meta -- (optional) dictionary
@@ -19,7 +19,7 @@ Parameters:
 
 Called via state transition endpoints
 
-Parameters:
+**Parameters:**
 
 * obj -- (optional) model instance
 
@@ -35,7 +35,7 @@ Called via DELETE `/app/model/<id>/`
 
 Called via GET `/app/model/<id>/`
 
-Parameters:
+**Parameters:**
 
 * queryset -- (optional) model queryset
 
@@ -47,7 +47,7 @@ Called via POST `/app/model/<id>/<state>/`
 
 Useful for executing custom logic when an instance transitions for the first time, e.g. emailing support@company.com
 
-Parameters:
+**Parameters:**
 
 * current_state -- string
 * meta -- dictionary
@@ -66,7 +66,7 @@ Called via POST `/app/model/<id>/<state>/`
 
 This will be called even when the current state does not change - if you want fine grain control see `process_{state}_to_{state}`.
 
-Parameters:
+**Parameters:**
 
 * meta -- dictionary
 * obj -- (optional) model instance
@@ -85,7 +85,7 @@ Called via POST `/app/model/<id>/<state>/`
 
 Note. there is no authentication hook for this - it will be called on **all** state transitions.
 
-Parameters:
+**Parameters:**
 
 * meta -- dictionary
 * obj -- (optional) model instance
