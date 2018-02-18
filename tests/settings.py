@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'yoflow',
     'example',
-    'campaigns',
     'rest_framework',
 ]
 

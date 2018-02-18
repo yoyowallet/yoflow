@@ -11,6 +11,14 @@ Define all possible state transitions and state change behaviour for model insta
 
 Documentation & Example Worflow: https://yoyowallet.github.io/yoflow/
 
+## Install
+
+```
+pip install git+ssh://git@github.com/yoyowallet/yoflow.git
+```
+
+Add `yoflow` to settings.INSTALLED_APPS
+
 ## Requirements
 
 * Django ≥ 1.10

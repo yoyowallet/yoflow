@@ -140,13 +140,13 @@ urlpatterns = [
 
 For our possible model states this will provide:
 
-| HTTP Method | URI                       | Description                       |
-| ----------- | ------------------------- | ----------------------------------|
-| `POST`      | `/blog/`                  | Create new instance               |
-| `GET`       | `/blog/<int:pk>/history`  | Fetch history of state changes    |
-| `POST`      | `/blog/<int:pk>/draft`    | Update instance to draft state    |
-| `POST`      | `/blog/<int:pk>/approved` | Update instance to approved state |
-| `DELETE`    | `/blog/<int:pk>/`         | Delete instance from database     | 
+| HTTP Method | URI                        | Description                       |
+| ----------- | -------------------------- | ----------------------------------|
+| `POST`      | `/blog/`                   | Create new instance               |
+| `GET`       | `/blog/<int:pk>/history/`  | Fetch history of state changes    |
+| `POST`      | `/blog/<int:pk>/draft/`    | Update instance to draft state    |
+| `POST`      | `/blog/<int:pk>/approved/` | Update instance to approved state |
+| `DELETE`    | `/blog/<int:pk>/`          | Delete instance from database     | 
 
 * * *
 

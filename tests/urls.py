@@ -20,5 +20,4 @@ from django.conf.urls import include, url
 urlpatterns = [
     url('^admin/', admin.site.urls),
     url('^example/', include('example.urls')),
-    url('^campaigns/', include('campaigns.urls')),
 ]
