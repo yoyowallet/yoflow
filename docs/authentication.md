@@ -24,30 +24,33 @@ Subsequent check on create endpoint only
 
 * * *
 
-### `can_delete(request)`
+### `can_delete(request, obj)`
 
 Subsequent check on delete endpoint only
 
 **Parameters:**
 
 * request -- web request
+* obj - model instance
 
 * * *
 
-### `can_view_history(request)`
+### `can_view_history(request, obj)`
 
 Subsequent check on history endpoint only
 
 **Parameters:**
 
 * request -- web request
+* obj - model instance
 
 * * *
 
-### `has_{state}_permission(request)`
+### `has_{state}_permission(request, obj)`
 
 Subsequent test on individual transitions
 
 **Parameters:**
 
 * request -- web request
+* obj - model instance

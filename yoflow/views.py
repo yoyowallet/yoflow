@@ -40,9 +40,9 @@ def create(request, flow, **kwargs):
 @transaction.atomic
 @yoflow
 def delete(request, flow, **kwargs):
-    if not flow.permissions.can_delete(request):
-        raise exceptions.PermissionDenied('You do not have permission to delete instances')
     obj = get_object(flow, kwargs[flow.lookup_field])
+    if not flow.permissions.can_delete(request=request, obj=obj):
+        raise exceptions.PermissionDenied('You do not have permission to delete instances')
     obj.delete()
     return flow.response_delete()
 
@@ -54,7 +54,7 @@ def update(request, flow, **kwargs):
     state = request.path.strip('/').split('/')[-1]
     new_state_id = flow.reversed_states[state]
     obj = get_object(flow, kwargs[flow.lookup_field])
-    flow.check_permissions(request=request, new_state=state)
+    flow.check_permissions(request=request, obj=obj, new_state=state)
     flow.validate_state_change(obj=obj, new_state=new_state_id)
     flow.process(obj=obj, new_state=state, request=request)
     setattr(obj, flow.state_field, new_state_id)
@@ -65,7 +65,7 @@ def update(request, flow, **kwargs):
 @require_http_methods(['GET'])
 @yoflow
 def history(request, flow, **kwargs):
-    if not flow.permissions.can_view_history(request):
-        raise exceptions.PermissionDenied('You do not have permission to view instance history')
     obj = get_object(flow, kwargs[flow.lookup_field])
+    if not flow.permissions.can_view_history(request=request, obj=obj):
+        raise exceptions.PermissionDenied('You do not have permission to view instance history')
     return flow.response_history(obj.yoflow_history.all())

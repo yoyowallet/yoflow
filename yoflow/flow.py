@@ -116,10 +116,10 @@ class Flow(object):
             safe=False,
         )
 
-    def check_permissions(self, request, new_state):
+    def check_permissions(self, request, obj, new_state):
         permission_check = 'has_{}_permission'.format(new_state)
         if hasattr(self.permissions, permission_check):
-            if not getattr(self.permissions, permission_check)(request):
+            if not getattr(self.permissions, permission_check)(request=request, obj=obj):
                 raise PermissionDenied()
         else:
             raise PermissionDenied('You do not have permission for {} state'.format(new_state))

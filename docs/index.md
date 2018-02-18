@@ -47,20 +47,20 @@ class BlogPermissions(permissions.Permissions):
         return True
 
     @staticmethod
-    def can_delete(request):
+    def can_delete(request, obj):
         # prevent deletion for all non-staff users
         return request.user.is_staff
 
     @staticmethod
-    def can_view_history(request):
+    def can_view_history(request, obj):
         return True
 
     @staticmethod
-    def has_draft_permission(request):
+    def has_draft_permission(request, obj):
         return True
 
     @staticmethod
-    def has_approved_permission(request):
+    def has_approved_permission(request, obj):
         return True
 ```
 

@@ -10,9 +10,9 @@ class Permissions(object):
         return False
 
     @staticmethod
-    def can_delete(request):
+    def can_delete(request, obj):
         return False
 
     @staticmethod
-    def can_view_history(request):
+    def can_view_history(request, obj):
         return False

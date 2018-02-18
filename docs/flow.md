@@ -83,7 +83,7 @@ This will be called even when the current state does not change - if you want fi
 
 Called via POST `/app/model/<id>/<state>/`
 
-Note. there is no authentication hook for this - it will be called on **all** state transitions.
+Note. the only authentication hook for this is `authenticate` - it will be called on **all** state transitions.
 
 **Parameters:**
 

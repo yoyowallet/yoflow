@@ -17,7 +17,7 @@ Documentation & Example Worflow: https://yoyowallet.github.io/yoflow/
 pip install git+ssh://git@github.com/yoyowallet/yoflow.git
 ```
 
-Add `yoflow` to settings.INSTALLED_APPS
+Add `yoflow` to `settings.INSTALLED_APPS`
 
 ## Requirements
 
