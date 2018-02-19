@@ -65,7 +65,11 @@ def update(request, flow, **kwargs):
 @require_http_methods(['GET'])
 @yoflow
 def history(request, flow, **kwargs):
+    statuses = request.GET.getlist('status')
     obj = get_object(flow, kwargs[flow.lookup_field])
     if not flow.permissions.can_view_history(request=request, obj=obj):
         raise exceptions.PermissionDenied('You do not have permission to view instance history')
-    return flow.response_history(obj.yoflow_history.all())
+    queryset = obj.yoflow_history.all()
+    if statuses:
+        queryset = queryset.filter(new_state__in=statuses)
+    return flow.response_history(queryset)

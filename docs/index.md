@@ -192,6 +192,20 @@ $ http GET localhost:8000/blog/1/history/
         "user": null
     }
 ]
+
+# view filtered history
+$ http GET localhost:8000/blog/1/history/?status=approved
+[
+    {
+        "created_at": "2018-01-29T17:00:00.000Z",
+        "meta": {
+            "message": "Approved!"
+        },
+        "new_state": "approved",
+        "previous_state": "draft",
+        "user": null
+    }
+]
 ```
 
 ## Admin Integration
