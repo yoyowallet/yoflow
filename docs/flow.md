@@ -2,26 +2,26 @@
 
 You can override any of the following workflow functions to customise functionality:
 
-### `create(**kwargs)`
+### `create(obj, meta, request, json)`
 
 Called via POST `/app/model/`
 
 **Parameters:**
 
-* obj -- (optional) model instance
-* meta -- (optional) dictionary
-* request -- (optional) web request
-* json -- (optional) parsed json data from POST body
+* obj -- model instance
+* meta -- dictionary
+* request -- web request
+* json -- parsed json data from POST body
 
 * * *
 
-### `response(**kwargs)`
+### `response(obj)`
 
 Called via state transition endpoints
 
 **Parameters:**
 
-* obj -- (optional) model instance
+* obj -- model instance
 
 * * *
 
@@ -31,17 +31,17 @@ Called via DELETE `/app/model/<id>/`
 
 * * *
 
-### `response_history(**kwargs)`
+### `response_history(queryset)`
 
 Called via GET `/app/model/<id>/`
 
 **Parameters:**
 
-* queryset -- (optional) model queryset
+* queryset -- model queryset
 
 * * *
 
-### `process_{state}_to_{state}(**kwargs)`
+### `process_{state}_to_{state}(current_state, meta, obj, request, json, new_state, state_changed, via_admin)`
 
 Called via POST `/app/model/<id>/<state>/`
 
@@ -49,18 +49,18 @@ Useful for executing custom logic when an instance transitions for the first tim
 
 **Parameters:**
 
-* current_state -- (optional) string
-* meta -- (optional) dictionary
-* obj -- (optional) model instance
-* request -- (optional) web request
-* json -- (optional) parsed json data from POST body
-* new_state -- (optional) string
-* state_changed -- (optional) current_state != new_state
-* via_admin -- (optional) bool
+* current_state -- string
+* meta -- dictionary
+* obj -- model instance
+* request -- web request
+* json -- parsed json data from POST body
+* new_state -- string
+* state_changed -- current_state != new_state
+* via_admin -- bool
 
 * * *
 
-### `process_on_{state}(**kwargs)`
+### `process_on_{state}(meta, obj, request, json, new_state, state_changed, via_admin, current_state)`
 
 Called via POST `/app/model/<id>/<state>/`
 
@@ -68,18 +68,18 @@ This will be called even when the current state does not change - if you want fi
 
 **Parameters:**
 
-* meta -- (optional) dictionary
-* obj -- (optional) model instance
-* request -- (optional) web request
-* json -- (optional) parsed json data from POST body
-* new_state -- (optional) string
-* state_changed -- (optional) current_state != new_state
-* via_admin -- (optional) bool
-* current_state -- (optional) string
+* meta -- dictionary
+* obj -- model instance
+* request -- web request
+* json -- parsed json data from POST body
+* new_state -- string
+* state_changed -- current_state != new_state
+* via_admin -- bool
+* current_state -- string
 
 * * *
 
-### `all(**kwargs)`
+### `all(meta, obj, request, json, new_state, state_changed, via_admin, current_state)`
 
 Called via POST `/app/model/<id>/<state>/`
 
@@ -87,11 +87,11 @@ Note. the only authentication hook for this is `authenticate` - it will be calle
 
 **Parameters:**
 
-* meta -- (optional) dictionary
-* obj -- (optional) model instance
-* request -- (optional) web request
-* json -- (optional) parsed json data from POST body
-* new_state -- (optional) string
-* state_changed -- (optional) current_state != new_state
-* via_admin -- (optional) bool
-* current_state -- (optional) string
+* meta -- dictionary
+* obj -- model instance
+* request -- web request
+* json -- parsed json data from POST body
+* new_state -- string
+* state_changed -- current_state != new_state
+* via_admin -- bool
+* current_state -- string

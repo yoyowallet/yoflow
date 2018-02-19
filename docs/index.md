@@ -169,11 +169,18 @@ $ http POST localhost:8000/blog/1/approved/ message='Approved!'
 $ http GET localhost:8000/blog/1/history/
 [
     {
-        "created_at": "2018-01-29T16:00:00.000Z",
+        "created_at": "2018-01-29T17:00:00.000Z",
         "meta": {
             "message": "Approved!"
         },
         "new_state": "approved",
+        "previous_state": "draft",
+        "user": null
+    },
+    {
+        "created_at": "2018-01-29T16:00:00.000Z",
+        "meta": null,
+        "new_state": "draft",
         "previous_state": "draft",
         "user": null
     },
