@@ -96,6 +96,8 @@ Note. the only authentication hook for this is `authenticate` - it will be calle
 * via_admin -- bool
 * current_state -- string
 
+* * *
+
 ### `admin_json(obj)`
 
 Construct JSON object which mimics POST json from admin change request object.
