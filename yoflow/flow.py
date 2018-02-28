@@ -62,27 +62,24 @@ class Flow(object):
         return None if is_anonymous else user
 
     @staticmethod
-    def admin_json(obj):
-        return None
+    def admin_json(obj, cleaned_data):
+        return cleaned_data
 
-    def load_json(self, obj, request, via_admin):
-        json = None
-        if via_admin:
-            json = self.admin_json(obj)
-        elif not via_admin and request.body:
-            json = json.loads(request.body)
-        return json
+    def load_json(self, obj, request, cleaned_data):
+        data = None
+        if cleaned_data is not None:
+            # must be via admin
+            data = self.admin_json(obj, cleaned_data)
+        elif cleaned_data is None and request.body:
+            data = json.loads(request.body)
+        return data
 
-    def process_new(self, request, obj=None):
-        """
-        Create new instance of flow model - not supported via admin
-        """
+    def process_new(self, request, obj, cleaned_data=None):
         if not hasattr(self, 'create'):
             raise PermissionDenied('Unable to create new {}'.format(self.model._meta))  # TODO test model name with py27
 
         meta = {}
-        obj = self.model()
-        data = json.loads(request.body) if request.body else None
+        data = self.load_json(obj=obj, request=request, cleaned_data=cleaned_data)
         self.create(obj=obj, meta=meta, request=request, json=data)
         obj.save()
         if hasattr(obj, 'yoflow_history'):
@@ -94,7 +91,7 @@ class Flow(object):
             )
         return obj
 
-    def process(self, obj, new_state, request, via_admin=False):
+    def process(self, obj, new_state, request, cleaned_data=None):
         current_state = self.states[getattr(obj, self.state_field)]
         meta = {}
         kwargs = {
@@ -102,8 +99,9 @@ class Flow(object):
             'state_changed': current_state != new_state,
             'obj': obj,
             'request': request,
-            'via_admin': via_admin,
-            'json': self.load_json(obj=obj, request=request, via_admin=via_admin),
+            'via_admin': cleaned_data is not None,
+            'cleaned_data': cleaned_data,
+            'json': self.load_json(obj=obj, request=request, cleaned_data=cleaned_data),
         }
         self.process_state_to_state(current_state=current_state, meta=meta, **kwargs)
         self.process_on_state(meta=meta, **kwargs)

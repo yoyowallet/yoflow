@@ -32,7 +32,7 @@ def yoflow(f):
 def create(request, flow, **kwargs):
     if not flow.permissions.can_create(request):
         raise exceptions.PermissionDenied('You do not have permission to create new instances')
-    obj = flow.process_new(request=request)
+    obj = flow.process_new(request=request, obj=flow.model())
     return flow.response(obj=obj)
 
 
