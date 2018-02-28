@@ -224,6 +224,8 @@ class BlogAdmin(FlowAdmin):
     form = forms.BlogForm
 ```
 
+*Note. when changing model instances via admin the value of `json` provided to flow functions is mapped to the `cleaned_data` dict provided by admin. If you wish to modify this value your can override `admin_json`.*
+
 ## Middleware
 
 If enabled, `YoflowMiddleware` will catch `yoflow.exception` instances and return a JSON payload.
