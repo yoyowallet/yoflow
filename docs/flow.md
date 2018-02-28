@@ -95,3 +95,13 @@ Note. the only authentication hook for this is `authenticate` - it will be calle
 * state_changed -- current_state != new_state
 * via_admin -- bool
 * current_state -- string
+
+### `admin_json(obj)`
+
+Construct JSON object which mimics POST json from admin change request object.
+
+**Parameters:**
+
+* obj - model instance
+
+**Returns: None**
