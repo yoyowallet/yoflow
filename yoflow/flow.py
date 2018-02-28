@@ -61,6 +61,18 @@ class Flow(object):
         is_anonymous = user.is_anonymous if isinstance(user.is_anonymous, bool) else user.is_anonymous()
         return None if is_anonymous else user
 
+    @staticmethod
+    def admin_json(obj):
+        return None
+
+    def load_json(self, obj, request, via_admin):
+        json = None
+        if via_admin:
+            json = self.admin_json(obj)
+        elif not via_admin and request.body:
+            json = json.loads(request.body)
+        return json
+
     def process_new(self, request, obj=None):
         """
         Create new instance of flow model - not supported via admin
@@ -91,7 +103,7 @@ class Flow(object):
             'obj': obj,
             'request': request,
             'via_admin': via_admin,
-            'json': json.loads(request.body) if not via_admin and request.body else None,
+            'json': self.load_json(obj=obj, request=request, via_admin=via_admin),
         }
         self.process_state_to_state(current_state=current_state, meta=meta, **kwargs)
         self.process_on_state(meta=meta, **kwargs)
