@@ -43,19 +43,3 @@ def test_basic_flow_urls(example_parent_flow):
 #     req.user = request.getfuncargvalue(user_fixture)
 #     with pytest.raises(exceptions.FlowException):
 #         response = views.create(req, example_parent_flow)
-
-
-def test_process_state_to_state():
-    pass
-
-def test_process_on_state():
-    pass
-
-def test_process_on_all():
-    pass
-
-def test_process():
-    pass
-
-def test_check_user_permissions():
-    pass

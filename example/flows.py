@@ -44,13 +44,17 @@ class ChildFlow(flow.Flow):
 
     @staticmethod
     def draft_to_approved(new_state, obj, request, meta, via_admin):
-        return {'comment': 'I am approving this!'}
+        meta['comment'] = 'comment'
 
     @staticmethod
     def on_approved(new_state, obj, request, meta, via_admin):
         if obj.parent.state != models.APPROVED:
             # check that parent is approved otherwise raise error
             raise ValidationError('Unable to approve because parent is not approved - approve parent first.')
+
+    @staticmethod
+    def all(meta, **kwargs):
+        meta['all'] = 'all'
 
     @staticmethod
     def response(obj):

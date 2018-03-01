@@ -30,7 +30,7 @@ def test_bad_state(rf, example_parent_flow, user):
 
 def test_bad_state_response(user_client, example_parent_flow):
     response = user_client.post('/example/parent/1/unknown-state/')
-    assert response.status_code == 404 # TODO json response?
+    assert response.status_code == 404
 
 
 def test_object_not_found(user, rf, example_parent_flow):
