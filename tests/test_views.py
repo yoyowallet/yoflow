@@ -51,26 +51,19 @@ def test_bad_permission():
     pass
 
 
-mapping = {
-    'draft': factories.DraftParentFactory,
-    'approved': factories.ApprovedParentFactory,
-    'final': factories.FinalParentFactory,
-}
-
-
-@pytest.mark.parametrize("current,new_state,valid", [
-    ('draft', 'draft', True),
-    ('draft', 'approved', True),
-    ('draft', 'final', False),
-    ('approved', 'draft', False),
-    ('approved', 'approved', True),
-    ('approved', 'final', True),
-    ('final', 'draft', False),
-    ('final', 'approved', False),
-    ('final', 'final', True),
+@pytest.mark.parametrize("factory,new_state,valid", [
+    (factories.DraftParentFactory, 'draft', True),
+    (factories.DraftParentFactory, 'approved', True),
+    (factories.DraftParentFactory, 'final', False),
+    (factories.ApprovedParentFactory, 'draft', False),
+    (factories.ApprovedParentFactory, 'approved', True),
+    (factories.ApprovedParentFactory, 'final', True),
+    (factories.FinalParentFactory, 'draft', False),
+    (factories.FinalParentFactory, 'approved', False),
+    (factories.FinalParentFactory, 'final', True),
 ])
-def test_state_transitions(admin_client, current, new_state, valid):
-    obj = mapping[current]()
+def test_state_transitions(admin_client, factory, new_state, valid):
+    obj = factory()
     uri = '/example/parent/{pk}/{state}/'.format(pk=obj.pk, state=new_state)
     response = admin_client.post(uri, b'{}', content_type='application/json')
     if valid:
@@ -79,7 +72,8 @@ def test_state_transitions(admin_client, current, new_state, valid):
         assert response.status_code == 405
         content = json.loads(response.content)
         assert content['success'] == False
-        assert content['message'] == 'Invalid state change from {} to {}'.format(current, new_state)
+        expeted_messaged = 'Invalid state change from {} to {}'.format(obj.get_state_display(), new_state)
+        assert content['message'] == expeted_messaged
 
 
 def test_bad_process():
