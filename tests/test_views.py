@@ -4,6 +4,7 @@ import pytest
 from django.test.utils import override_settings
 
 from yoflow import exceptions, views
+from tests import factories
 
 
 def test_create_instance_not_supported(rf, example_parent_flow, user):
@@ -50,17 +51,35 @@ def test_bad_permission():
     pass
 
 
-def test_invalid_state_change_raises_exception(rf, admin_user, example_parent_flow, parent):
-    request = rf.post('/example/parent/1/final/')
-    request.user = admin_user
-    with pytest.raises(exceptions.InvalidTransition):
-        response = views.update(request, example_parent_flow, pk=parent.pk)
+mapping = {
+    'draft': factories.DraftParentFactory,
+    'approved': factories.ApprovedParentFactory,
+    'final': factories.FinalParentFactory,
+}
 
 
-def test_invalid_state_change_raises_exception_response(admin_client, example_parent_flow, parent):
-    response = admin_client.post('/example/parent/{}/final/'.format(parent.pk))
-    assert response.status_code == 405
-    assert json.loads(response.content)['success'] == False
+@pytest.mark.parametrize("current,new_state,valid", [
+    ('draft', 'draft', True),
+    ('draft', 'approved', True),
+    ('draft', 'final', False),
+    ('approved', 'draft', False),
+    ('approved', 'approved', True),
+    ('approved', 'final', True),
+    ('final', 'draft', False),
+    ('final', 'approved', False),
+    ('final', 'final', True),
+])
+def test_state_transitions(admin_client, current, new_state, valid):
+    obj = mapping[current]()
+    uri = '/example/parent/{pk}/{state}/'.format(pk=obj.pk, state=new_state)
+    response = admin_client.post(uri, b'{}', content_type='application/json')
+    if valid:
+        assert response.status_code == 200
+    else:
+        assert response.status_code == 405
+        content = json.loads(response.content)
+        assert content['success'] == False
+        assert content['message'] == 'Invalid state change from {} to {}'.format(current, new_state)
 
 
 def test_bad_process():

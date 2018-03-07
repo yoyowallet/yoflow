@@ -22,7 +22,7 @@ def yoflow(f):
                 raise exceptions.PermissionDenied('User not authenticated')
             return f(request, flow, *args, **kwargs)
         except Exception as e:
-            raise e if isinstance(e, exceptions.FlowException) else exceptions.FlowException
+            raise e if isinstance(e, exceptions.FlowException) else exceptions.FlowException()
     return wrapper
 
 
@@ -32,7 +32,7 @@ def yoflow(f):
 def create(request, flow, **kwargs):
     if not flow.permissions.can_create(request):
         raise exceptions.PermissionDenied('You do not have permission to create new instances')
-    obj = flow.process_new(request=request, obj=flow.model())
+    obj = flow.process_new(request=request)
     return flow.response(obj=obj)
 
 
@@ -51,13 +51,11 @@ def delete(request, flow, **kwargs):
 @transaction.atomic
 @yoflow
 def update(request, flow, **kwargs):
-    state = request.path.strip('/').split('/')[-1]
-    new_state_id = flow.reversed_states[state]
+    new_state_name = request.path.strip('/').split('/')[-1]
     obj = get_object(flow, kwargs[flow.lookup_field])
-    flow.check_permissions(request=request, obj=obj, new_state=state)
-    flow.validate_state_change(obj=obj, new_state=new_state_id)
-    flow.process(obj=obj, new_state=state, request=request)
-    setattr(obj, flow.state_field, new_state_id)
+    flow.check_permissions(request=request, obj=obj, new_state_name=new_state_name)
+    flow.process(obj=obj, new_state_name=new_state_name, request=request)
+    setattr(obj, flow.state_field, flow.reversed_states[new_state_name])
     obj.save()
     return flow.response(obj=obj)
 

@@ -25,13 +25,12 @@ class FlowForm(forms.ModelForm):
             if self.instance.pk:
                 self.flow.process(
                     obj=self.instance,
-                    new_state=self.flow.states[new_state],
+                    new_state_name=self.flow.states[new_state],
                     request=self.request,
                     cleaned_data=cleaned_data,
                 )
             else:
                 self.flow.process_new(
-                    obj=self.instance,
                     request=self.request,
                     cleaned_data=cleaned_data,
                 )

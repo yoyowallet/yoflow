@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 
 from yoflow.flow import Flow
-from yoflow import exceptions
+from yoflow import exceptions, permissions
 
 
 def test_init(example_parent_flow):
@@ -30,6 +30,10 @@ def test_basic_flow_urls(example_parent_flow):
     assert urls[3].name == 'create'
     assert urls[4].name == 'delete'
     assert urls[5].name == 'history'
+
+
+# def test_validate_state_change():
+    # 
 
 
 # @pytest.mark.django_db

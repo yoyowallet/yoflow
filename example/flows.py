@@ -17,9 +17,9 @@ class ParentFlow(flow.Flow):
         models.FINAL: [],
     }
 
-    @staticmethod
-    def create(obj, json, **kwargs):
-        obj.name = json['name']
+    @classmethod
+    def create(cls, validated_data, **kwargs):
+        return cls.model(name=validated_data['name'])
 
 
 class ChildFlow(flow.Flow):
@@ -38,9 +38,9 @@ class ChildFlow(flow.Flow):
     url_regex = '(?P<uuid>[0-9a-f-]+)'
     lookup_field = 'uuid'
 
-    @staticmethod
-    def create(obj, json, **kwargs):
-        obj.parent_id = json['parent']
+    @classmethod
+    def create(cls, validated_data, **kwargs):
+        return cls.model(parent_id=validated_data['parent'])
 
     @staticmethod
     def draft_to_approved(new_state, obj, request, meta, via_admin):
