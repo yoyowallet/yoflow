@@ -29,11 +29,6 @@ class FlowForm(forms.ModelForm):
                     request=self.request,
                     cleaned_data=cleaned_data,
                 )
-            else:
-                self.flow.process_new(
-                    request=self.request,
-                    cleaned_data=cleaned_data,
-                )
         except FlowException as e:
             raise ValidationError(e, code='error')
         return cleaned_data

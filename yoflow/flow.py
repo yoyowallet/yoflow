@@ -41,15 +41,16 @@ class Flow(object):
                 self.states[new_state],
             ))
 
+    def default_process(*args, **kwargs):
+        pass
+
     def process_state_to_state(self, current_state, new_state, meta, **kwargs):
         state_to_state = '{}_to_{}'.format(current_state, new_state)
-        if hasattr(self, state_to_state):
-            getattr(self, state_to_state)(new_state=new_state, meta=meta, **kwargs)
+        getattr(self, state_to_state, self.default_process)(new_state=new_state, meta=meta, **kwargs)
 
     def process_on_state(self, new_state, meta, **kwargs):
         on_state = 'on_{}'.format(new_state)
-        if hasattr(self, on_state):
-            getattr(self, on_state)(new_state=new_state, meta=meta, **kwargs)
+        getattr(self, on_state, self.default_process)(new_state=new_state, meta=meta, **kwargs)
 
     def all(self, meta, **kwargs):
         pass
@@ -65,16 +66,17 @@ class Flow(object):
         return cleaned_data
 
     @staticmethod
-    def validate_data(data, **kwargs):  # TODO docs
+    def validate_data(data, **kwargs):
         return data
 
     def validate(self, request, cleaned_data, state, obj=None):
+        via_admin = cleaned_data is not None
         data = None
-        if cleaned_data is not None:
+        if via_admin:
             data = self.admin_json(cleaned_data)  # via admin
         elif cleaned_data is None and request.body:
             data = json.loads(request.body)
-        return self.validate_data(data=data, request=request, obj=obj, state=state)
+        return self.validate_data(data=data, request=request, obj=obj, state=state, via_admin=via_admin)
 
     def process_new(self, request, cleaned_data=None):
         if not hasattr(self, 'create'):

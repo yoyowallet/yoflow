@@ -1,17 +1,28 @@
 ## Workflow
 
-You can override any of the following workflow functions to customise functionality:
+You can override any of the following workflow functions to customise behaviour:
 
-### `create(obj, meta, request, json)`
+### `validate_data(data, request, obj, state, via_admin)`
 
-Called via POST `/app/model/`
+Called via create and transition endpoints to process incoming request and validate data. By default this will return the JSON payload of the request if not provided. You may wish to customise this behaviour, for example, using django rest framework serializers to validate incoming requests. You can return any object from this function and use it later in other transitional hooks.
 
 **Parameters:**
 
+* data -- dict
+* request -- web request
 * obj -- model instance
+* state -- new state
+* via_admin -- bool
+
+### `create(meta, request, validated_data)`
+
+Called via POST `/app/model/` - **not called via admin**
+
+**Parameters:**
+
 * meta -- dictionary
 * request -- web request
-* json -- parsed json data from POST body
+* validated_data -- validated data from request
 
 * * *
 
@@ -41,7 +52,7 @@ Called via GET `/app/model/<id>/`
 
 * * *
 
-### `process_{state}_to_{state}(current_state, meta, obj, request, json, new_state, state_changed, via_admin)`
+### `process_{state}_to_{state}(current_state, meta, obj, request, validated_data, new_state, state_changed, via_admin)`
 
 Called via POST `/app/model/<id>/<state>/`
 
@@ -53,14 +64,14 @@ Useful for executing custom logic when an instance transitions for the first tim
 * meta -- dictionary
 * obj -- model instance
 * request -- web request
-* json -- parsed json data from POST body
+* validated_data
 * new_state -- string
 * state_changed -- current_state != new_state
 * via_admin -- bool
 
 * * *
 
-### `process_on_{state}(meta, obj, request, json, new_state, state_changed, via_admin, current_state)`
+### `process_on_{state}(meta, obj, request, validated_data, new_state, state_changed, via_admin, current_state)`
 
 Called via POST `/app/model/<id>/<state>/`
 
@@ -71,7 +82,7 @@ This will be called even when the current state does not change - if you want fi
 * meta -- dictionary
 * obj -- model instance
 * request -- web request
-* json -- parsed json data from POST body
+* validated_data
 * new_state -- string
 * state_changed -- current_state != new_state
 * via_admin -- bool
@@ -79,7 +90,7 @@ This will be called even when the current state does not change - if you want fi
 
 * * *
 
-### `all(meta, obj, request, json, new_state, state_changed, via_admin, current_state)`
+### `all(meta, obj, request, validated_data, new_state, state_changed, via_admin, current_state)`
 
 Called via POST `/app/model/<id>/<state>/`
 
@@ -90,7 +101,7 @@ Note. the only authentication hook for this is `authenticate` - it will be calle
 * meta -- dictionary
 * obj -- model instance
 * request -- web request
-* json -- parsed json data from POST body
+* validated_data
 * new_state -- string
 * state_changed -- current_state != new_state
 * via_admin -- bool
