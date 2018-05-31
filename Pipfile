@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"psycopg2" = "*"
+django = "*"
+djangorestframework = "*"
+
+[dev-packages]
+pytest-mock = "*"
+pytest-django = "*"
+pytest = "*"
+tox = "*"
+factory-boy = "*"
+xenon = "*"
+"flake8" = "*"
+twine = "*"
+"bump2version" = "*"
+
+[requires]
+python_version = "3.6"
