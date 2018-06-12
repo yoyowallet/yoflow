@@ -21,6 +21,9 @@ xenon:
 test: static_analysis
 	tox $(pytest_args)
 
+coverage:
+	py.test --cov=yoflow tests/
+
 bundle:
 	python setup.py sdist
 
@@ -40,4 +43,4 @@ bump-minor:
 bump-patch:
 	bump2version patch
 
-.PHONY: bump-major bump-minor bump-patch bundle clean database pep8 release release-test static_analysis test virtualenv xenon
+.PHONY: bump-major bump-minor bump-patch bundle clean coverage database pep8 release release-test static_analysis test virtualenv xenon

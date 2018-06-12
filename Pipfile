@@ -18,6 +18,7 @@ xenon = "*"
 "flake8" = "*"
 twine = "*"
 "bump2version" = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.6"
