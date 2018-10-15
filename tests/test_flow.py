@@ -1,6 +1,7 @@
 import json
 import pytest
 
+from django.core.exceptions import PermissionDenied
 from django.test import override_settings
 from django.urls import reverse
 from yoflow.flow import Flow
@@ -54,3 +55,14 @@ def test_process_all(flow, draft_post, mocker, mock_transition):
     mock_all = mocker.patch.object(flow, 'all')
     flow.process(obj=draft_post, to_state=models.Post.APPROVED, request=mocker.Mock())
     assert mock_all.call_count == 1
+
+
+@pytest.mark.django_db
+def test_check_permissions(flow, draft_post):
+    flow.check_permissions(obj=draft_post, to_state=models.Post.APPROVED)
+
+
+@pytest.mark.django_db
+def test_check_permissions_denied(flow, draft_post):
+    with pytest.raises(PermissionDenied):
+        flow.check_permissions(obj=draft_post, to_state=models.Post.DRAFT)

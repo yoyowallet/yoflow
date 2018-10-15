@@ -21,11 +21,6 @@ def transition(draft_post, flow):
     )
 
 
-# @pytest.mark.django_db
-# def test_valid_states(transition):
-#     assert transition.valid_states == [models.Post.APPROVED]
-
-
 def test_get_user_fallback(rf):
     request = rf.request()
     request.user = AnonymousUser()
