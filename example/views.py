@@ -10,7 +10,9 @@ from example import flows, models, serializers
 # django function based view example
 def approved_function_view(request, pk):
     obj = models.Post.objects.get(pk=pk)
-    flows.PostFlow().process(obj=obj, to_state=models.Post.APPROVED, request=request, meta=request.POST)
+    flow = flows.PostFlow()
+    flow.check_permissions(obj=obj, to_state=models.Post.APPROVED)
+    flow.process(obj=obj, to_state=models.Post.APPROVED, request=request, meta=request.POST)
     return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -6,9 +6,16 @@ def transition(to_state):
         @wraps(view)
         def wrapper(self, *args, **kwargs):
             flow = self.flow()
+            # process custom validation logic
             meta = flow.validate(self)
+            # fetch instance
+            obj = self.get_object()
+            # validate state change
+            flow.check_permissions(obj=obj, to_state=to_state)
+            # process view logic
             result = view(self, *args, **kwargs)
-            flow.process(obj=self.get_object(), to_state=to_state, meta=meta, request=self.request)
+            # process flow logic
+            flow.process(obj=obj, to_state=to_state, meta=meta, request=self.request)
             return result
         return wrapper
     return decorator
