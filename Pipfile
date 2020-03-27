@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"psycopg2" = "*"
 django = "*"
 djangorestframework = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 pytest-mock = "*"

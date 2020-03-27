@@ -22,15 +22,14 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Framework :: Django',
-        'Framework :: Django :: 1.10',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
-        'Programming Language :: Python :: 2',
+        'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3',
+        'Framework :: Django :: 3.2',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
     install_requires=[
-        'Django>=1.10'
+        'Django>=2.2'
     ],
     packages=[
         'yoflow'
