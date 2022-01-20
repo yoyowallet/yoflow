@@ -7,6 +7,7 @@ name = "pypi"
 "psycopg2" = "*"
 django = "*"
 djangorestframework = "*"
+six = "*"
 
 [dev-packages]
 pytest-mock = "*"
