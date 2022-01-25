@@ -22,7 +22,17 @@ jobs:
       matrix:
         python: ["3.7", "3.8", "3.9", "3.10"]
       fail-fast: false
-
+    services:
+      postgres:
+        image: postgres:12.5
+        env:
+          POSTGRES_DB: yoflow
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+          # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - name: Check out repository
       uses: actions/checkout@v2
