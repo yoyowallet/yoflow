@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "yoflow"
+version = "1.0.1"
+description = "Django workflows"
+authors = ["Yoyo <dev@yoyowallet.com>"]
+include = [
+    "LICENSE",
+]
+packages = [
+    { include="yoflow" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+django = ">=3.2,<4.0.0"
+djangorestframework = "*"
+six = "*"
+
+[tool.poetry.dev-dependencies]
+pytest-mock = "*"
+pytest-django = "*"
+pytest = "*"
+factory-boy = "*"
+xenon = "*"
+flake8 = "*"
+pytest-cov = "*"
+pre-commit = "*"
+
+[tool.black]
+include = '\.pyi?$'
+skip-string-normalization = true
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE='tests.settings'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
