@@ -13,6 +13,12 @@ Documentation & Example Worflow: https://yoyowallet.github.io/yoflow/
 
 ## Install
 
+Install via github:
+```
+pip install https://github.com/yoyowallet/yoflow.git
+```
+(Or similar)
+
 Add `yoflow` to your `INSTALLED_APPS`:
 
 ```
