@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.views import View
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from yoflow.decorators import transition
+
 from example import flows, models, serializers
+from yoflow.decorators import transition
 
 
 # django function based view example
@@ -12,7 +13,9 @@ def approved_function_view(request, pk):
     obj = models.Post.objects.get(pk=pk)
     flow = flows.PostFlow()
     flow.check_permissions(obj=obj, to_state=models.Post.APPROVED)
-    flow.process(obj=obj, to_state=models.Post.APPROVED, request=request, meta=request.POST)
+    flow.process(
+        obj=obj, to_state=models.Post.APPROVED, request=request, meta=request.POST
+    )
     return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -42,4 +45,6 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def history(self, request, pk=None):
         qs = self.get_object().yoflow_history.all()
-        return Response(qs.values('created_at', 'new_state', 'previous_state', 'meta', 'user'))
+        return Response(
+            qs.values('created_at', 'new_state', 'previous_state', 'meta', 'user')
+        )

@@ -1,14 +1,10 @@
-import json
 import pytest
-
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import override_settings
-from django.test.client import RequestFactory
-from rest_framework.exceptions import APIException
-from yoflow.transition import Transition
 
 from example import models
+from yoflow.transition import Transition
 
 
 @pytest.fixture
@@ -31,7 +27,9 @@ def test_get_user_fallback(rf):
 @pytest.mark.django_db
 def test_get_user(rf):
     request = rf.request()
-    test_user = User.objects.create_user(username='test', email='test@example.com', password='top_secret')
+    test_user = User.objects.create_user(
+        username='test', email='test@example.com', password='top_secret'
+    )
     request.user = test_user
     user = Transition.get_user(request=request)
     assert user == test_user
@@ -49,20 +47,23 @@ def test_create_history(transition, rf):
 def test_create_history_meta_valid_json_object(transition, rf):
     request = rf.request()
     request.user = AnonymousUser()
-    data = { 'test': True }
+    data = {'test': True}
     transition.create_history(to_state=models.Post.APPROVED, request=request, meta=data)
     assert transition.obj.yoflow_history.count() == 1
     assert transition.obj.yoflow_history.first().meta == data
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("data", [
-    'test',
-    1,
-    [1, 2],
-    True,
-    False,
-])
+@pytest.mark.parametrize(
+    "data",
+    [
+        'test',
+        1,
+        [1, 2],
+        True,
+        False,
+    ],
+)
 def test_create_history_meta_invalid_json_objects(transition, rf, data):
     with override_settings():
         del settings.YOFLOW_TYPE_ERROR

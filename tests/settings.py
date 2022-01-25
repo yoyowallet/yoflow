@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from rest_framework.exceptions import APIException
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -81,8 +83,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'yoflow',
         'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
         'POST': '5432',
     }
 }
@@ -93,7 +95,8 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.'
+        'UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -116,8 +119,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -131,5 +132,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 YOFLOW_STATE_MAX_LENGTH = 256
 YOFLOW_OBJECT_ID_MAX_LENGTH = 256
 YOFLOW_DEFAULT_STATE_FIELD = 'state'
-from rest_framework.exceptions import APIException
+
 YOFLOW_TYPE_ERROR = APIException

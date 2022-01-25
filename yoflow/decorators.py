@@ -17,5 +17,7 @@ def transition(to_state):
             # process flow logic
             flow.process(obj=obj, to_state=to_state, meta=meta, request=self.request)
             return result
+
         return wrapper
+
     return decorator

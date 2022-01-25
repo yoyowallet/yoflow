@@ -3,7 +3,6 @@ from django.db import transaction
 
 
 class Transition(object):
-
     def __init__(self, obj, states, from_state, state_field='state'):
         self.obj = obj
         self.from_state = from_state
@@ -13,7 +12,11 @@ class Transition(object):
     @staticmethod
     def get_user(request):
         user = request.user
-        is_anonymous = user.is_anonymous if isinstance(user.is_anonymous, bool) else user.is_anonymous()
+        is_anonymous = (
+            user.is_anonymous
+            if isinstance(user.is_anonymous, bool)
+            else user.is_anonymous()
+        )
         return None if is_anonymous else user
 
     def create_history(self, to_state, meta, request):

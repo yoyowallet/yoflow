@@ -1,7 +1,7 @@
 from django.contrib import admin
-from yoflow.admin import FlowAdmin
 
-from example import models, flows
+from example import flows, models
+from yoflow.admin import FlowAdmin
 
 
 @admin.register(models.Post)
