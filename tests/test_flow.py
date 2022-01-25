@@ -1,12 +1,9 @@
-import json
 import pytest
-
 from django.core.exceptions import PermissionDenied
 from django.test import override_settings
-from django.urls import reverse
-from yoflow.flow import Flow
 
 from example import models
+from yoflow.flow import Flow
 
 
 def test_state_field_default():
@@ -22,8 +19,10 @@ def test_state_field_settings():
 
 def test_state_field_class():
     field = 'test'
+
     class Test(Flow):
         state_field = field
+
     assert Test().field == field
 
 

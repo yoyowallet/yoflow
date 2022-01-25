@@ -6,7 +6,6 @@ from yoflow.transition import Transition
 
 
 class Flow(object):
-
     @property
     def field(self):
         if hasattr(self, 'state_field'):
@@ -24,7 +23,9 @@ class Flow(object):
         from_state = getattr(obj, self.field)
         valid_states = self.transitions[from_state]
         if to_state not in valid_states:
-            raise PermissionDenied('{} not in allowed states'.format(self.states[to_state]))
+            raise PermissionDenied(
+                '{} not in allowed states'.format(self.states[to_state])
+            )
 
     def process_state_to_state(self, from_state, to_state, obj, meta):
         state_to_state = '{}_to_{}'.format(from_state, to_state)
@@ -39,7 +40,8 @@ class Flow(object):
 
     def validate(self, view):
         """
-        Override to run preprocessing validation checks - e.g. raise exception if POST body invalid
+        Override to run preprocessing validation checks -
+        e.g. raise exception if POST body invalid
         :return: meta json
         """
         pass
@@ -47,9 +49,16 @@ class Flow(object):
     @transaction.atomic
     def process(self, obj, to_state, request, meta=None):
         from_state = getattr(obj, self.field)
-        transition = Transition(obj=obj, state_field=self.field, from_state=from_state, states=self.states)
+        transition = Transition(
+            obj=obj, state_field=self.field, from_state=from_state, states=self.states
+        )
         transition.transition(to_state=to_state, meta=meta, request=request)
         # process custom state update logic
-        self.process_state_to_state(from_state=self.states[from_state], to_state=self.states[to_state], obj=obj, meta=meta)
+        self.process_state_to_state(
+            from_state=self.states[from_state],
+            to_state=self.states[to_state],
+            obj=obj,
+            meta=meta,
+        )
         self.process_on_state(to_state=self.states[to_state], obj=obj, meta=meta)
         self.process_all(obj=obj, meta=meta)

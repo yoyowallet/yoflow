@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
-from yoflow import flow
 
 from example import models
+from yoflow import flow
 
 
 class PostFlow(flow.Flow):
@@ -21,7 +21,12 @@ class PostFlow(flow.Flow):
 
     @staticmethod
     def on_approved(obj, meta):
-        send_mail('Approved!', '{} was approved'.format(obj), 'from@example.com', ['to@example.com'])
+        send_mail(
+            'Approved!',
+            '{} was approved'.format(obj),
+            'from@example.com',
+            ['to@example.com'],
+        )
 
     @staticmethod
     def all(obj, meta):

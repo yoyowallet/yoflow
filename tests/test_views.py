@@ -1,12 +1,9 @@
 import json
-import pytest
 
+import pytest
 from django.conf import settings
 from django.test import override_settings
 from rest_framework import status
-from rest_framework.exceptions import APIException
-
-from example import views
 
 urls = [
     ('/blog/post/{}/approved/'),
@@ -40,7 +37,7 @@ def test_approved_bad_meta(admin_client, draft_post):
         del settings.YOFLOW_TYPE_ERROR
         meta = 'bad'
         with pytest.raises(TypeError):
-            response = admin_client.post(
+            admin_client.post(
                 '/blog/post/{}/approved/'.format(draft_post.id),
                 json.dumps(meta),
                 content_type='application/json',

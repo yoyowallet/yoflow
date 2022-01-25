@@ -1,6 +1,5 @@
 import pytest
 
-from yoflow.flow import Flow
 from example import flows
 from tests import factories
 
@@ -14,7 +13,7 @@ def flow():
 def user_client(client, django_user_model, user):
     user.set_password(user)
     user.save()
-    response = client.login(username=user.username, password=user.username)
+    client.login(username=user.username, password=user.username)
     yield client
 
 
