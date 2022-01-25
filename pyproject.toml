@@ -16,6 +16,7 @@ python = "^3.6"
 django = ">=3.2,<4.0.0"
 djangorestframework = "*"
 six = "*"
+psycopg2 = "*"
 
 [tool.poetry.dev-dependencies]
 pytest-mock = "*"
