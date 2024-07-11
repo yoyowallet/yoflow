@@ -55,7 +55,7 @@ class FlowInline(GenericTabularInline):
         )
         return format_html('<a href="{}">{}</a>'.format(url, obj.pk))
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, object=None):
         return False
 
 
