@@ -13,9 +13,7 @@ def approved_function_view(request, pk):
     obj = models.Post.objects.get(pk=pk)
     flow = flows.PostFlow()
     flow.check_permissions(obj=obj, to_state=models.Post.APPROVED)
-    flow.process(
-        obj=obj, to_state=models.Post.APPROVED, request=request, meta=request.POST
-    )
+    flow.process(obj=obj, to_state=models.Post.APPROVED, request=request, meta=request.POST)
     return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -24,7 +22,7 @@ class ApprovedClassBasedView(View):
     flow = flows.PostFlow
 
     def get_object(self):
-        return models.Post.objects.get(pk=self.kwargs['pk'])
+        return models.Post.objects.get(pk=self.kwargs["pk"])
 
     @transition(to_state=models.Post.APPROVED)
     def post(self, request, pk):
@@ -37,14 +35,12 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.PostSerializer
     flow = flows.PostFlow
 
-    @action(methods=['post'], detail=True)
+    @action(methods=["post"], detail=True)
     @transition(to_state=models.Post.APPROVED)
     def approved(self, request, pk=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['get'], detail=True)
+    @action(methods=["get"], detail=True)
     def history(self, request, pk=None):
         qs = self.get_object().yoflow_history.all()
-        return Response(
-            qs.values('created_at', 'new_state', 'previous_state', 'meta', 'user')
-        )
+        return Response(qs.values("created_at", "new_state", "previous_state", "meta", "user"))

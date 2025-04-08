@@ -27,9 +27,7 @@ def test_get_user_fallback(rf):
 @pytest.mark.django_db
 def test_get_user(rf):
     request = rf.request()
-    test_user = User.objects.create_user(
-        username='test', email='test@example.com', password='top_secret'
-    )
+    test_user = User.objects.create_user(username="test", email="test@example.com", password="top_secret")
     request.user = test_user
     user = Transition.get_user(request=request)
     assert user == test_user
@@ -47,7 +45,7 @@ def test_create_history(transition, rf):
 def test_create_history_meta_valid_json_object(transition, rf):
     request = rf.request()
     request.user = AnonymousUser()
-    data = {'test': True}
+    data = {"test": True}
     transition.create_history(to_state=models.Post.APPROVED, request=request, meta=data)
     assert transition.obj.yoflow_history.count() == 1
     assert transition.obj.yoflow_history.first().meta == data
@@ -57,7 +55,7 @@ def test_create_history_meta_valid_json_object(transition, rf):
 @pytest.mark.parametrize(
     "data",
     [
-        'test',
+        "test",
         1,
         [1, 2],
         True,
@@ -86,9 +84,9 @@ def test_transition(transition, mocker, rf):
 
 @pytest.mark.django_db
 def test_transition_atomic_create_history(transition, mocker):
-    mocked = mocker.patch.object(transition, 'create_history')
+    mocked = mocker.patch.object(transition, "create_history")
     mocked.side_effect = mocker.Mock(side_effect=Exception())
-    with pytest.raises(Exception):
+    with pytest.raises(Exception):  # noqa: B017
         transition.transition(to_state=models.Post.APPROVED, request=mocker.Mock())
 
     obj = models.Post.objects.get(pk=transition.obj.pk)

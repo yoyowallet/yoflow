@@ -7,13 +7,10 @@ class FlowForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # limit available choices based on current state
         state_field = self.flow.field
+
         current_state = getattr(self.instance, state_field)
         available_states = self.flow.transitions.get(current_state, [])
-        states = tuple(
-            (k, v)
-            for k, v in self.flow.states.items()
-            if k in available_states or k is current_state
-        )
+        states = tuple((k, v) for k, v in self.flow.states.items() if k in available_states or k is current_state)
         if len(states) == 1:
             self.fields[state_field].disabled = True
         else:
@@ -31,5 +28,5 @@ class FlowForm(forms.ModelForm):
                         request=self.request,
                     )
             except Exception as e:
-                raise ValidationError(e, code='error')
+                raise ValidationError(e, code="error")
         return cleaned_data

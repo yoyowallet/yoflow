@@ -1,0 +1,32 @@
+version: 2
+updates:
+
+  # Poetry https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    pull-request-branch-name:
+      separator: "_"
+
+    # Group updates into single pull requests
+    groups:
+      poetry-security:
+        applies-to: "security-updates"
+        update-types: ["major"]
+        dependency-type: "production"
+
+      poetry-prd-updates:
+        applies-to: "version-updates"
+        update-types: ["major"]
+        dependency-type: "production"
+
+      poetry-dev-updates:
+        applies-to: "version-updates"
+        update-types: ["major"]
+        dependency-type: "development"
+
+    # Restrict to major versions. Security updates are already covered by GitHub.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]

@@ -6,27 +6,27 @@ from django.test import override_settings
 from rest_framework import status
 
 urls = [
-    ('/blog/post/{}/approved/'),
-    ('/blog/post-view/{}/approved/'),
-    ('/blog/post-cbv/{}/approved/'),
+    ("/blog/post/{}/approved/"),
+    ("/blog/post-view/{}/approved/"),
+    ("/blog/post-cbv/{}/approved/"),
 ]
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize('url', urls)
+@pytest.mark.parametrize("url", urls)
 def test_approved(admin_client, draft_post, url):
     response = admin_client.post(url.format(draft_post.id))
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize('url', urls)
+@pytest.mark.parametrize("url", urls)
 def test_approved_meta(admin_client, draft_post, url):
-    meta = {'valid': 'jsonobj'}
+    meta = {"valid": "jsonobj"}
     response = admin_client.post(
         url.format(draft_post.id),
         json.dumps(meta),
-        content_type='application/json',
+        content_type="application/json",
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
@@ -35,21 +35,21 @@ def test_approved_meta(admin_client, draft_post, url):
 def test_approved_bad_meta(admin_client, draft_post):
     with override_settings():
         del settings.YOFLOW_TYPE_ERROR
-        meta = 'bad'
+        meta = "bad"
         with pytest.raises(TypeError):
             admin_client.post(
-                '/blog/post/{}/approved/'.format(draft_post.id),
+                f"/blog/post/{draft_post.id}/approved/",
                 json.dumps(meta),
-                content_type='application/json',
+                content_type="application/json",
             )
 
 
 @pytest.mark.django_db
 def test_approved_bad_meta_override(admin_client, draft_post):
-    meta = 'bad'
+    meta = "bad"
     response = admin_client.post(
-        '/blog/post/{}/approved/'.format(draft_post.id),
+        f"/blog/post/{draft_post.id}/approved/",
         json.dumps(meta),
-        content_type='application/json',
+        content_type="application/json",
     )
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

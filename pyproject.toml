@@ -18,7 +18,7 @@ djangorestframework = "*"
 six = "*"
 psycopg2-binary = "^2.9.10"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest-mock = "*"
 pytest-django = "*"
 pytest = "*"
@@ -27,6 +27,7 @@ xenon = "*"
 flake8 = "*"
 pytest-cov = "*"
 pre-commit = "*"
+ruff = "^0.11.0"
 
 [tool.black]
 include = '\.pyi?$'

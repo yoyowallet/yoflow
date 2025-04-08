@@ -7,8 +7,8 @@ class Post(FlowModel):
     DRAFT = 1
     APPROVED = 2
     STATES = (
-        (DRAFT, 'draft'),
-        (APPROVED, 'approved'),
+        (DRAFT, "draft"),
+        (APPROVED, "approved"),
     )
     name = models.CharField(max_length=256)
     content = models.TextField()
