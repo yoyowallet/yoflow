@@ -8,7 +8,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Post
-        fields = ('name', 'content', 'state')
+        fields = ("name", "content", "state")
 
     def get_state(self, obj):
         return obj.get_state_display()

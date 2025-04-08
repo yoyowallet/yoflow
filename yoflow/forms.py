@@ -12,7 +12,7 @@ class FlowForm(forms.ModelForm):
         available_states = self.flow.transitions.get(current_state, [])
         states = tuple((k, v) for k, v in self.flow.states.items() if k in available_states or k is current_state)
         if len(states) == 1:
-            self.fields[state_field].disabled = True
+            self.fields[state_field].disabled =  True
         else:
             self.fields[state_field].choices = states
 

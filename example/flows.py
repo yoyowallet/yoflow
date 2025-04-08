@@ -13,7 +13,7 @@ class PostFlow(flow.Flow):
 
     @staticmethod
     def validate(view):
-        return getattr(view.request, 'data', view.request.POST)
+        return getattr(view.request, "data", view.request.POST)
 
     @staticmethod
     def draft_to_approved(obj, meta):
@@ -22,10 +22,10 @@ class PostFlow(flow.Flow):
     @staticmethod
     def on_approved(obj, meta):
         send_mail(
-            'Approved!',
-            '{} was approved'.format(obj),
-            'from@example.com',
-            ['to@example.com'],
+            "Approved!",
+            f"{obj} was approved",
+            "from@example.com",
+            ["to@example.com"],
         )
 
     @staticmethod
