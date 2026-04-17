@@ -13,7 +13,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.9"
 
-django = ">=3.2,<5.0"
+django = ">=3.2,<6.0"
 djangorestframework = "*"
 six = "*"
 psycopg2-binary = "^2.9.10"
@@ -27,7 +27,7 @@ xenon = "*"
 flake8 = "*"
 pytest-cov = "*"
 pre-commit = "*"
-ruff = "^0.11.0"
+ruff = "^0.15.11"
 
 [tool.black]
 include = '\.pyi?$'
