@@ -1,12 +1,17 @@
 repos:
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.23.1  # replace with latest tag on GitHub
+    rev: 1.30.0  # replace with latest tag on GitHub
     hooks:
     -   id: django-upgrade
-        args: [--target-version, "4.2"]  # Replace with target django version when updates are neccessary
+        args: [--target-version, "5.2"]  # Replace with target django version when updates are neccessary
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.2
+    hooks:
+    -   id: pyupgrade
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.0
+    rev: v0.15.11
     hooks:
     -   id: ruff
         alias: autoformat
@@ -14,11 +19,11 @@ repos:
     -   id: ruff-format
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
-      - id: check-byte-order-marker
+      - id: fix-byte-order-marker
       - id: check-case-conflict
       - id: check-json
       - id: check-symlinks
@@ -29,9 +34,9 @@ repos:
       - id: debug-statements
       - id: detect-private-key
       - id: end-of-file-fixer
-      - id: fix-encoding-pragma
-        args: [--remove]
       - id: forbid-new-submodules
       - id: mixed-line-ending
         args: [--fix=lf]
+      - id: no-commit-to-branch
+        args: [--branch=master]
       - id: trailing-whitespace
